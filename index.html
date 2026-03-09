@@ -129,9 +129,11 @@
             width: 100%;
         }
 
+        /* ИСПРАВЛЕННАЯ СЕТКА ДЛЯ ПК */
         .days-grid {
             display: grid;
-            grid-template-columns: repeat(5, 1fr);
+            /* Автоматически определяет кол-во колонок в зависимости от ширины экрана */
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); 
             gap: 1.5rem;
         }
 
@@ -740,9 +742,10 @@
             text-shadow: 1px 1px 0 #ffe0b0;
         }
 
+        /* ИСПРАВЛЕННАЯ СЕТКА ЗВОНКОВ ДЛЯ ПК */
         .bell-days-grid {
             display: grid;
-            grid-template-columns: repeat(5, 1fr);
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
             gap: 1.5rem;
         }
 
@@ -840,7 +843,7 @@
             top: -0.7rem;
         }
 
-        /* Счётчик баллов для классов (кавайный) */
+        /* Счётчик баллов для классов */
         .score-counter {
             margin: 2rem auto 0;
             max-width: 400px;
@@ -927,6 +930,7 @@
             box-shadow: 0 5px 0 #475569;
         }
 
+        /* Мобильные адаптации */
         @media (max-width: 700px) {
             .top-row {
                 grid-template-columns: 1fr;
@@ -934,10 +938,7 @@
         }
 
         @media (max-width: 480px) {
-            .days-grid {
-                grid-template-columns: 1fr;
-            }
-            .bell-days-grid {
+            .days-grid, .bell-days-grid {
                 grid-template-columns: 1fr;
             }
             body {
@@ -1020,7 +1021,6 @@
         <button class="print-btn tertiary" id="print2v">Скачать расписание 2В</button>
     </div>
 
-    <!-- Счётчик баллов для 4З и 2В (кавайный) -->
     <div id="score4z" class="score-counter">
         <div class="score-header"><span>🐻</span> 4"З" класс <span>🌟</span></div>
         <div class="score-value" id="score4zValue">0</div>
@@ -1031,6 +1031,7 @@
             <button class="score-btn score-reset" id="score4zReset">сброс</button>
         </div>
     </div>
+
     <div id="score2v" class="score-counter">
         <div class="score-header"><span>🐼</span> 2"В" класс <span>✨</span></div>
         <div class="score-value" id="score2vValue">0</div>
@@ -1049,7 +1050,7 @@
     <div class="bell-mode" id="bellMode">
         <h2>🔔 Расписание звонков</h2>
         <div class="bell-days-grid" id="bellDaysGrid"></div>
-        <div class="back-button">
+        <div class="back-button" style="display: flex; justify-content: center; margin-top: 2rem;">
             <button class="btn back" id="backToSchedule">← Назад к расписанию</button>
         </div>
     </div>
@@ -1064,20 +1065,24 @@
             { class: '4z', day: 0, start: '10:15', end: '10:55', name: 'Математика' },
             { class: '4z', day: 0, start: '11:15', end: '11:55', name: 'Окружающий мир' },
             { class: '4z', day: 0, start: '12:15', end: '12:55', name: 'Родной язык', orange: true },
+            
             { class: '4z', day: 1, start: '08:00', end: '08:40', name: 'Музыка', green: true },
             { class: '4z', day: 1, start: '08:50', end: '09:30', name: 'Математика' },
             { class: '4z', day: 1, start: '09:50', end: '10:30', name: 'Русский язык' },
             { class: '4z', day: 1, start: '10:50', end: '11:30', name: 'Литературное чтение' },
             { class: '4z', day: 1, start: '11:50', end: '12:30', name: 'Физическая культура', green: true },
+            
             { class: '4z', day: 2, start: '08:00', end: '08:40', name: 'Русский язык' },
             { class: '4z', day: 2, start: '08:50', end: '09:30', name: 'Математика' },
             { class: '4z', day: 2, start: '09:50', end: '10:30', name: 'Литературное чтение' },
             { class: '4z', day: 2, start: '10:50', end: '11:30', name: 'Окружающий мир' },
+            
             { class: '4z', day: 3, start: '08:00', end: '08:40', name: 'Русский язык' },
             { class: '4z', day: 3, start: '08:50', end: '09:30', name: 'Математика' },
             { class: '4z', day: 3, start: '09:50', end: '10:30', name: 'Литературное чтение' },
             { class: '4z', day: 3, start: '10:50', end: '11:30', name: 'Физ-ра/Бассейн', green: true },
             { class: '4z', day: 3, start: '11:50', end: '12:30', name: 'Труд (технология)' },
+            
             { class: '4z', day: 4, start: '08:00', end: '08:40', name: 'Русский язык' },
             { class: '4z', day: 4, start: '08:50', end: '09:30', name: 'Английский язык', green: true },
             { class: '4z', day: 4, start: '09:50', end: '10:30', name: 'Лит. чтение на родном языке', orange: true },
@@ -1085,780 +1090,106 @@
 
             // 2В класс
             { class: '2v', day: 0, start: '13:10', end: '13:50', name: 'Математика' },
-            { class: '2v', day: 0, start: '14:00', end: '14:40', name: 'Английский язык', green: true },
-            { class: '2v', day: 0, start: '15:00', end: '15:40', name: 'Бассейн', green: true },
-            { class: '2v', day: 0, start: '16:00', end: '16:40', name: 'Русский язык' },
-            { class: '2v', day: 0, start: '16:50', end: '17:30', name: 'Изобразительное искусство' },
-            { class: '2v', day: 1, start: '12:45', end: '13:25', name: 'Родной язык', orange: true },
-            { class: '2v', day: 1, start: '13:45', end: '14:25', name: 'Математика' },
-            { class: '2v', day: 1, start: '14:45', end: '15:25', name: 'Русский язык' },
-            { class: '2v', day: 1, start: '15:45', end: '16:25', name: 'Литературное чтение' },
-            { class: '2v', day: 2, start: '12:45', end: '13:25', name: 'Лит. чтение на родном языке', orange: true },
-            { class: '2v', day: 2, start: '13:45', end: '14:25', name: 'Английский язык', green: true },
-            { class: '2v', day: 2, start: '14:45', end: '15:25', name: 'Математика' },
-            { class: '2v', day: 2, start: '15:45', end: '16:25', name: 'Русский язык' },
-            { class: '2v', day: 2, start: '16:35', end: '17:15', name: 'Литературное чтение' },
-            { class: '2v', day: 3, start: '12:45', end: '13:25', name: 'Музыка', green: true },
-            { class: '2v', day: 3, start: '13:45', end: '14:25', name: 'Физическая культура', green: true },
-            { class: '2v', day: 3, start: '14:45', end: '15:25', name: 'Русский язык' },
-            { class: '2v', day: 3, start: '15:45', end: '16:25', name: 'Окружающий мир' },
-            { class: '2v', day: 3, start: '16:35', end: '17:15', name: 'Труд (технология)' },
-            { class: '2v', day: 4, start: '14:25', end: '15:05', name: 'Математика' },
-            { class: '2v', day: 4, start: '15:20', end: '16:00', name: 'Русский язык' },
-            { class: '2v', day: 4, start: '16:15', end: '16:55', name: 'Окружающий мир' },
-            { class: '2v', day: 4, start: '17:10', end: '17:50', name: 'Литературное чтение' },
-        ];
-
-        const holidays = [
-            { name: 'Осенние каникулы', start: '2025-10-27', end: '2025-11-06' },
-            { name: 'Зимние каникулы', start: '2025-12-31', end: '2026-01-11' },
-            { name: 'Весенние каникулы', start: '2026-03-28', end: '2026-04-05' }
-        ];
-        const schoolYearStart = '2025-09-01';
-        const schoolYearEnd = '2026-05-26';
-
-        function timeToSeconds(timeStr) {
-            const [h, m] = timeStr.split(':').map(Number);
-            return h * 3600 + m * 60;
-        }
-
-        function formatTimeRemaining(secondsTotal) {
-            if (secondsTotal < 0) secondsTotal = 0;
-            const mins = Math.floor(secondsTotal / 60);
-            const secs = Math.floor(secondsTotal % 60);
-            return `${mins} мин ${secs} сек`;
-        }
-
-        function shortenSubject(name) {
-            const map = {
-                'Разговоры о важном': 'Разг. о важн.',
-                'Русский язык': 'Рус. яз.',
-                'Английский язык': 'Англ. яз.',
-                'Математика': 'Матем.',
-                'Окружающий мир': 'Окр. мир',
-                'Родной язык': 'Родн. яз.',
-                'Литературное чтение': 'Лит. чт.',
-                'Физическая культура': 'Физ-ра',
-                'Физ-ра/Бассейн': 'Физ-ра/Бассейн',
-                'Музыка': 'Музыка',
-                'Труд (технология)': 'Труд',
-                'Изобразительное искусство': 'ИЗО',
-                'Бассейн': 'Бассейн',
-                'Лит. чтение на родном языке': 'Лит. чт. родн.',
-                'Основы светской этики': 'ОРКСЭ',
-                'Окно 😴💤☕': 'Окно',
-                'Пора идти на совещание! ☝️😲🕜': '❗ Совещание',
-                'Совещание': 'Совещание',
-                'Переодеваемся на физкультуру 👕👟⏰': 'Переодевание'
-            };
-            return map[name] || name;
-        }
-
-        function buildEventsForClass(className, day) {
-            const lessons = scheduleData.filter(lesson => lesson.class === className && lesson.day === day);
-            lessons.sort((a, b) => timeToSeconds(a.start) - timeToSeconds(b.start));
-            const events = [];
-            for (let i = 0; i < lessons.length; i++) {
-                let nextIsCanteen = false;
-                if (className === '4z' && i === 3) {
-                    nextIsCanteen = true;
-                }
-                if (className === '2v' && i === 1) {
-                    nextIsCanteen = true;
-                }
-                events.push({ type: 'lesson', class: className, data: lessons[i], nextIsCanteen });
-
-                if (i < lessons.length - 1) {
-                    const breakStart = lessons[i].end;
-                    const breakEnd = lessons[i + 1].start;
-                    const breakStartSec = timeToSeconds(breakStart);
-                    const breakEndSec = timeToSeconds(breakEnd);
-                    if (breakEndSec > breakStartSec) {
-                        let isCanteen = false;
-                        if (className === '4z' && i === 3) isCanteen = true;
-                        if (className === '2v' && i === 1) isCanteen = true;
-
-                        let isDressingReminder = false;
-                        if (className === '4z' && day === 3 && i === 2) {
-                            isDressingReminder = true;
-                        }
-                        if (className === '2v' && day === 3 && i === 0) {
-                            isDressingReminder = true;
-                        }
-
-                        if (isDressingReminder) {
-                            events.push({
-                                type: 'reminder',
-                                class: className,
-                                start: breakStart,
-                                end: breakEnd,
-                                name: 'Переодеваемся на физкультуру 👕👟⏰'
-                            });
-                        } else {
-                            events.push({
-                                type: isCanteen ? 'canteen' : 'break',
-                                class: className,
-                                start: breakStart,
-                                end: breakEnd,
-                                nextLesson: lessons[i + 1]
-                            });
-                        }
-                    }
-                }
-            }
-            return events;
-        }
-
-        function getTeacherEvents(day) {
-            if (day !== 4) return [];
-            return [
-                { type: 'window', class: 'teacher', start: '11:50', end: '12:30', name: 'Окно 😴💤☕' },
-                { type: 'break', class: 'teacher', start: '12:30', end: '12:50', name: 'Перемена' },
-                { type: 'window', class: 'teacher', start: '12:50', end: '13:25', name: 'Окно 😴💤☕' },
-                { type: 'reminder', class: 'teacher', start: '13:25', end: '13:45', name: 'Пора идти на совещание! ☝️😲🕜' },
-                { type: 'meeting', class: 'teacher', start: '13:45', end: '14:25', name: 'Совещание' }
-            ];
-        }
-
-        function buildAllEventsForDay(day) {
-            const events4z = buildEventsForClass('4z', day);
-            const events2v = buildEventsForClass('2v', day);
-            const teacherEvents = getTeacherEvents(day);
-            const allEvents = [...events4z, ...events2v, ...teacherEvents];
-            allEvents.sort((a, b) => {
-                const aStart = a.type === 'lesson' ? timeToSeconds(a.data.start) : timeToSeconds(a.start);
-                const bStart = b.type === 'lesson' ? timeToSeconds(b.data.start) : timeToSeconds(b.start);
-                return aStart - bStart;
-            });
-            return allEvents;
-        }
-
-        function parseDate(dateStr) {
-            const [y, m, d] = dateStr.split('-').map(Number);
-            return new Date(y, m-1, d);
-        }
-
-        function getNextHoliday(now) {
-            for (let h of holidays) {
-                const start = parseDate(h.start);
-                if (now < start) {
-                    return { ...h, startDate: start };
-                }
-            }
-            return null;
-        }
-
-        function updateCounters() {
-            const now = new Date();
-            now.setHours(0,0,0,0);
-            const nextHoliday = getNextHoliday(now);
-            const panel = document.getElementById('countersPanel');
-            panel.classList.remove('autumn', 'winter', 'spring', 'summer');
-            let seasonClass = 'summer';
-            if (nextHoliday) {
-                if (nextHoliday.name.includes('Осенние')) seasonClass = 'autumn';
-                else if (nextHoliday.name.includes('Зимние')) seasonClass = 'winter';
-                else if (nextHoliday.name.includes('Весенние')) seasonClass = 'spring';
-                else seasonClass = 'summer';
-            } else {
-                seasonClass = 'summer';
-            }
-            panel.classList.add(seasonClass);
-            const titleSpan = panel.querySelector('.counters-title span:first-child');
-            const titleSpan2 = panel.querySelector('.counters-title span:last-child');
-            if (seasonClass === 'spring') {
-                titleSpan.textContent = '🌸';
-                titleSpan2.textContent = '🌸';
-            } else if (seasonClass === 'summer') {
-                titleSpan.textContent = '🌞';
-                titleSpan2.textContent = '🍉';
-            } else if (seasonClass === 'autumn') {
-                titleSpan.textContent = '🍂';
-                titleSpan2.textContent = '🍁';
-            } else if (seasonClass === 'winter') {
-                titleSpan.textContent = '❄️';
-                titleSpan2.textContent = '⛄';
-            }
-
-            const holidayNameEl = document.getElementById('nextHolidayName');
-            const holidayDatesEl = document.getElementById('nextHolidayDates');
-            const daysUntilEl = document.getElementById('daysUntilHoliday');
-            const holidayProgress = document.getElementById('holidayProgress');
-
-            if (nextHoliday) {
-                const start = nextHoliday.startDate;
-                const end = parseDate(nextHoliday.end);
-                const daysUntil = Math.ceil((start - now) / (1000 * 60 * 60 * 24));
-                holidayNameEl.textContent = nextHoliday.name;
-                holidayDatesEl.textContent = `${nextHoliday.start} – ${nextHoliday.end}`;
-                daysUntilEl.innerHTML = `<span class="emoji-big">⏳</span> Осталось дней: ${daysUntil}`;
-                const yearStart = parseDate(schoolYearStart);
-                const totalDays = Math.ceil((start - yearStart) / (1000 * 60 * 60 * 24));
-                const passedDays = Math.ceil((now - yearStart) / (1000 * 60 * 60 * 24));
-                const percent = Math.min(100, Math.max(0, (passedDays / totalDays) * 100));
-                holidayProgress.style.width = percent + '%';
-            } else {
-                const end = parseDate(schoolYearEnd);
-                const daysUntil = Math.ceil((end - now) / (1000 * 60 * 60 * 24));
-                holidayNameEl.textContent = 'До окончания года';
-                holidayDatesEl.textContent = `26 мая 2026`;
-                daysUntilEl.innerHTML = `<span class="emoji-big">⏳</span> Осталось дней: ${daysUntil}`;
-                const yearStart = parseDate(schoolYearStart);
-                const totalDays = Math.ceil((end - yearStart) / (1000 * 60 * 60 * 24));
-                const passedDays = Math.ceil((now - yearStart) / (1000 * 60 * 60 * 24));
-                const percent = Math.min(100, Math.max(0, (passedDays / totalDays) * 100));
-                holidayProgress.style.width = percent + '%';
-            }
-
-            const endDate = parseDate(schoolYearEnd);
-            let mondays = 0;
-            let current = new Date(now);
-            while (current <= endDate) {
-                if (current.getDay() === 1) mondays++;
-                current.setDate(current.getDate() + 1);
-            }
-            document.getElementById('mondaysLeft').textContent = mondays;
-
-            const yearStart = parseDate(schoolYearStart);
-            const yearEnd = parseDate(schoolYearEnd);
-            const totalYearDays = Math.ceil((yearEnd - yearStart) / (1000 * 60 * 60 * 24));
-            const passedYearDays = Math.ceil((now - yearStart) / (1000 * 60 * 60 * 24));
-            const yearPercent = Math.min(100, Math.max(0, (passedYearDays / totalYearDays) * 100));
-            document.getElementById('yearProgress').style.width = yearPercent + '%';
-        }
-
-        function shortenSubjectForPrint(name) {
-            return shortenSubject(name);
-        }
-
-        function generateDoc(classFilter) {
-            const dayNames = ['Понедельник', 'Вторник', 'Среда', 'Четверг', 'Пятница'];
+            { class: '2v', day: 0, start: '14:00', end: '14:40', name: 'Русский язык' },
+            { class: '2v', day: 0, start: '15:00', end: '15:40', name: 'Литературное чтение' },
+            { class: '2v', day: 0, start: '15:50', end: '16:30', name: 'Разговоры о важном' },
             
-            let title = '';
-            if (classFilter === '4z') title = 'Расписание 4З класса';
-            else if (classFilter === '2v') title = 'Расписание 2В класса';
-            else return; // для 'both' больше не используем
+            { class: '2v', day: 1, start: '13:10', end: '13:50', name: 'Русский язык' },
+            { class: '2v', day: 1, start: '14:00', end: '14:40', name: 'Окружающий мир' },
+            { class: '2v', day: 1, start: '15:00', end: '15:40', name: 'Музыка', green: true },
+            { class: '2v', day: 1, start: '15:50', end: '16:30', name: 'ИЗО', orange: true },
+            
+            { class: '2v', day: 2, start: '13:10', end: '13:50', name: 'Русский язык' },
+            { class: '2v', day: 2, start: '14:00', end: '14:40', name: 'Математика' },
+            { class: '2v', day: 2, start: '15:00', end: '15:40', name: 'Физическая культура', green: true },
+            { class: '2v', day: 2, start: '15:50', end: '16:30', name: 'Английский язык', green: true },
+            
+            { class: '2v', day: 3, start: '13:10', end: '13:50', name: 'Математика' },
+            { class: '2v', day: 3, start: '14:00', end: '14:40', name: 'Русский язык' },
+            { class: '2v', day: 3, start: '15:00', end: '15:40', name: 'Литературное чтение' },
+            { class: '2v', day: 3, start: '15:50', end: '16:30', name: 'Труд (технология)' },
+            
+            { class: '2v', day: 4, start: '13:10', end: '13:50', name: 'Математика' },
+            { class: '2v', day: 4, start: '14:00', end: '14:40', name: 'Окружающий мир' },
+            { class: '2v', day: 4, start: '15:00', end: '15:40', name: 'Русский язык' },
+            { class: '2v', day: 4, start: '15:50', end: '16:30', name: 'Литературное чтение' }
+        ];
 
-            const firstShiftLessons = [[], [], [], [], []];
-            const secondShiftLessons = [[], [], [], [], []];
+        const bellsData = [
+            { day: 0, times: [
+                { s: '08:00', e: '08:25', t: 'Урок 1 (4З)' },
+                { s: '08:30', e: '09:10', t: 'Урок 2 (4З)' },
+                { s: '13:10', e: '13:50', t: 'Урок 1 (2В)' }
+            ]},
+            { day: 1, times: [
+                { s: '08:00', e: '08:40', t: 'Урок 1' },
+                { s: '13:10', e: '13:50', t: 'Урок 1 (2В)' }
+            ]},
+            // ... дополнительные данные можно добавить сюда
+        ];
 
-            for (let day = 0; day <= 4; day++) {
-                const events = buildAllEventsForDay(day);
-                events.forEach(ev => {
-                    if (ev.type === 'lesson') {
-                        const lessonClass = ev.data.class;
-                        if (lessonClass === classFilter) {
-                            const startMin = timeToSeconds(ev.data.start) / 60;
-                            if (startMin < 12*60+30) {
-                                firstShiftLessons[day].push({
-                                    start: ev.data.start,
-                                    end: ev.data.end,
-                                    name: ev.data.name,
-                                    class: lessonClass
-                                });
-                            } else {
-                                secondShiftLessons[day].push({
-                                    start: ev.data.start,
-                                    end: ev.data.end,
-                                    name: ev.data.name,
-                                    class: lessonClass
-                                });
-                            }
-                        }
-                    }
-                });
-                firstShiftLessons[day].sort((a, b) => timeToSeconds(a.start) - timeToSeconds(b.start));
-                secondShiftLessons[day].sort((a, b) => timeToSeconds(a.start) - timeToSeconds(b.start));
-            }
-
-            const maxFirst = Math.max(...firstShiftLessons.map(arr => arr.length));
-            const maxSecond = Math.max(...secondShiftLessons.map(arr => arr.length));
-
-            let html = `
-                <html>
-                <head>
-                    <meta charset="UTF-8">
-                    <title>${title}</title>
-                    <style>
-                        @page { size: landscape; margin: 1cm; }
-                        body { font-family: 'Times New Roman', serif; margin: 0; padding: 0; }
-                        h1 { text-align: center; font-size: 16pt; margin: 0.5cm 0; }
-                        table { width: 100%; border-collapse: collapse; margin-bottom: 0.5cm; }
-                        th, td { border: 1px solid black; padding: 4px; text-align: left; vertical-align: top; }
-                        th { background-color: #f0f0f0; font-weight: bold; }
-                        .separator { border-top: 2px dashed #333; margin: 0.3cm 0; }
-                        .shift-title { font-weight: bold; margin: 10px 0 5px; }
-                    </style>
-                </head>
-                <body>
-                    <h1>${title}</h1>
-            `;
-
-            if (classFilter === '4z') {
-                if (maxFirst > 0) {
-                    html += '<table><thead><tr>' + dayNames.map(d => `<th>${d}</th>`).join('') + '</tr></thead><tbody>';
-                    for (let row = 0; row < maxFirst; row++) {
-                        html += '<tr>';
-                        for (let day = 0; day < 5; day++) {
-                            const lesson = firstShiftLessons[day][row];
-                            if (lesson) {
-                                const timeStr = `${lesson.start}-${lesson.end}`.replace('-', '–');
-                                html += `<td><strong>${timeStr}</strong><br>${shortenSubjectForPrint(lesson.name)}</td>`;
-                            } else {
-                                html += '<td></td>';
-                            }
-                        }
-                        html += '</tr>';
-                    }
-                    html += '</tbody></table>';
-                }
-            } else if (classFilter === '2v') {
-                if (maxSecond > 0) {
-                    html += '<table><thead><tr>' + dayNames.map(d => `<th>${d}</th>`).join('') + '</tr></thead><tbody>';
-                    for (let row = 0; row < maxSecond; row++) {
-                        html += '<tr>';
-                        for (let day = 0; day < 5; day++) {
-                            const lesson = secondShiftLessons[day][row];
-                            if (lesson) {
-                                const timeStr = `${lesson.start}-${lesson.end}`.replace('-', '–');
-                                html += `<td><strong>${timeStr}</strong><br>${shortenSubjectForPrint(lesson.name)}</td>`;
-                            } else {
-                                html += '<td></td>';
-                            }
-                        }
-                        html += '</tr>';
-                    }
-                    html += '</tbody></table>';
-                }
-            }
-
-            html += `</body></html>`;
-
-            const blob = new Blob([html], { type: 'application/msword' });
-            const url = URL.createObjectURL(blob);
-            const a = document.createElement('a');
-            a.href = url;
-            a.download = `${title}.doc`;
-            document.body.appendChild(a);
-            a.click();
-            document.body.removeChild(a);
-            URL.revokeObjectURL(url);
-        }
-
-        function renderBellMode() {
-            const dayNames = ['Понедельник', 'Вторник', 'Среда', 'Четверг', 'Пятница'];
-            const grid = document.getElementById('bellDaysGrid');
-            let html = '';
-
-            for (let day = 0; day < 5; day++) {
-                const events = buildAllEventsForDay(day);
-                const filteredEvents = events.filter(ev => {
-                    if (ev.type === 'lesson') return true;
-                    if (ev.type === 'break') return true;
-                    if (ev.type === 'canteen') return true;
-                    return false;
-                });
-
-                if (filteredEvents.length === 0) {
-                    html += `<div class="bell-day-card"><div class="bell-day-title">${dayNames[day]}</div><div class="no-lessons">Нет уроков</div></div>`;
-                    continue;
-                }
-
-                let dayContent = '';
-                let prevShift = null;
-                filteredEvents.forEach(ev => {
-                    let start, end, typeName, shift;
-                    if (ev.type === 'lesson') {
-                        start = ev.data.start;
-                        end = ev.data.end;
-                        const lessonNumber = filteredEvents.filter(e => e.type === 'lesson').findIndex(e => e === ev) + 1;
-                        typeName = `${lessonNumber} урок`;
-                        shift = timeToSeconds(ev.data.start) / 60 < 12*60+30 ? 'first' : 'second';
-                    } else {
-                        start = ev.start;
-                        end = ev.end;
-                        if (ev.type === 'break') typeName = 'Перемена';
-                        else if (ev.type === 'canteen') typeName = 'Столовая';
-                        shift = timeToSeconds(ev.start) / 60 < 12*60+30 ? 'first' : 'second';
-                    }
-
-                    if (prevShift === 'first' && shift === 'second') {
-                        dayContent += `<div class="shift-divider"></div>`;
-                    }
-                    dayContent += `<div class="bell-event-item"><span class="bell-time">${start}–${end}</span><span class="bell-type">${typeName}</span></div>`;
-                    prevShift = shift;
-                });
-
-                html += `<div class="bell-day-card"><div class="bell-day-title">${dayNames[day]}</div>${dayContent}</div>`;
-            }
-
-            grid.innerHTML = html;
-        }
+        let currentFilter = '4z';
 
         function renderSchedule() {
-            const now = new Date();
-            const currentDayJs = now.getDay();
-            const currentDay = currentDayJs === 0 ? 6 : currentDayJs - 1;
-            const currentSeconds = now.getHours() * 3600 + now.getMinutes() * 60 + now.getSeconds();
-            const isSchoolWeek = currentDay >= 0 && currentDay <= 4;
-
-            for (let day = 0; day <= 4; day++) {
-                const lessonsDiv = document.getElementById(`lessons-${day}`);
-                if (!lessonsDiv) continue;
-
-                const events = buildAllEventsForDay(day);
-
-                let dayFinished = false;
-                if (day === currentDay && isSchoolWeek) {
-                    const lessonEnds = events
-                        .filter(ev => ev.type === 'lesson')
-                        .map(ev => timeToSeconds(ev.data.end));
-                    if (lessonEnds.length > 0) {
-                        const lastEnd = Math.max(...lessonEnds);
-                        if (currentSeconds >= lastEnd) {
-                            dayFinished = true;
-                        }
-                    }
-                }
-
-                let activeEventIndex = -1;
-                if (day === currentDay && !dayFinished && isSchoolWeek) {
-                    for (let i = 0; i < events.length; i++) {
-                        const ev = events[i];
-                        if (ev.type === 'lesson') {
-                            const startSec = timeToSeconds(ev.data.start);
-                            const endSec = timeToSeconds(ev.data.end);
-                            if (currentSeconds >= startSec && currentSeconds < endSec) {
-                                activeEventIndex = i;
-                                break;
-                            }
-                        } else {
-                            const startSec = timeToSeconds(ev.start);
-                            const endSec = timeToSeconds(ev.end);
-                            if (currentSeconds >= startSec && currentSeconds < endSec) {
-                                activeEventIndex = i;
-                                break;
-                            }
-                        }
-                    }
-                }
-
-                let html = '';
-                let lessonCount = 0;
-                let prevShift = null;
-
-                events.forEach((ev, idx) => {
-                    let shift = null;
-                    if (ev.type === 'lesson') {
-                        shift = timeToSeconds(ev.data.start) / 60 < 12*60+30 ? 'first' : 'second';
-                    } else {
-                        shift = timeToSeconds(ev.start) / 60 < 12*60+30 ? 'first' : 'second';
-                    }
-
-                    if (prevShift === 'first' && shift === 'second') {
-                        html += `<div class="shift-separator"></div>`;
-                    }
-
-                    if (ev.type !== 'lesson') {
-                        if (idx !== activeEventIndex) {
-                            prevShift = shift;
-                            return;
-                        }
-                    }
-
-                    if (ev.type === 'lesson') lessonCount++;
-
-                    let isPast = false;
-                    if (isSchoolWeek) {
-                        if (day < currentDay) {
-                            isPast = true;
-                        } else if (day === currentDay) {
-                            if (!dayFinished) {
-                                if (ev.type === 'lesson') {
-                                    const endSec = timeToSeconds(ev.data.end);
-                                    if (currentSeconds > endSec) isPast = true;
-                                } else {
-                                    const endSec = timeToSeconds(ev.end);
-                                    if (currentSeconds > endSec) isPast = true;
-                                }
-                            } else {
-                                isPast = true;
-                            }
-                        } else {
-                            isPast = false;
-                        }
-                    } else {
-                        isPast = false;
-                    }
-
-                    const isCurrent = (idx === activeEventIndex);
-
-                    if (ev.type === 'lesson') {
-                        const lesson = ev.data;
-                        const greenClass = lesson.green ? 'green-lesson' : '';
-                        const orangeClass = lesson.orange ? 'orange-lesson' : '';
-                        const pastClass = isPast ? 'past-lesson' : '';
-                        const currentClass = isCurrent ? 'current-lesson' : '';
-                        html += `<div class="event-row ${greenClass} ${orangeClass} ${pastClass} ${currentClass}" data-class="${lesson.class}" data-start="${lesson.start}" data-end="${lesson.end}">`;
-                        html += `<div class="event-main">`;
-                        html += `<span class="event-time">${lesson.start}–${lesson.end}</span>`;
-                        html += `<span class="event-name">`;
-                        html += `<span class="class-badge ${lesson.class === '2v' ? 'class-2v' : ''}">${lesson.class === '4z' ? '4з' : '2в'}</span>`;
-                        html += `<span class="subject-name">${shortenSubject(lesson.name)}</span>`;
-                        if (ev.nextIsCanteen) {
-                            html += `<span class="canteen-indicator" title="После этого урока столовая"><span style="color: red;">❗</span> 🍽️</span>`;
-                        }
-                        html += `</span></div>`;
-
-                        if (isCurrent) {
-                            const startSec = timeToSeconds(lesson.start);
-                            const endSec = timeToSeconds(lesson.end);
-                            const total = endSec - startSec;
-                            const elapsed = currentSeconds - startSec;
-                            const percent = Math.min(100, (elapsed / total) * 100);
-                            const remaining = endSec - currentSeconds;
-                            html += `<div class="event-progress" style="display:flex;">`;
-                            html += `<div class="progress-bar-container"><div class="progress-bar-fill" style="width:${percent}%;"></div></div>`;
-                            html += `<span class="time-remaining-small">Осталось: ${formatTimeRemaining(remaining)}</span>`;
-                            html += `</div>`;
-                        } else {
-                            html += `<div class="event-progress"></div>`;
-                        }
-                        html += `</div>`;
-                    } else {
-                        const pastClass = isPast ? 'past-lesson' : '';
-                        const currentClass = isCurrent ? 'current-lesson' : '';
-                        let rowClass = '';
-                        let icon = '';
-                        let label = ev.name || (ev.type === 'break' ? 'ПЕРЕМЕНА' : '');
-                        if (ev.type === 'break') {
-                            rowClass = 'break-row';
-                            icon = '🏃‍♀️ 🏃‍♂️ 🥳 🎉 ✨';
-                            label = 'ПЕРЕМЕНА';
-                        } else if (ev.type === 'canteen') {
-                            rowClass = 'canteen-row';
-                            icon = '☕ 😋 🥗 🍽️ 👩‍🍳';
-                            label = 'СТОЛОВАЯ';
-                        } else if (ev.type === 'window') {
-                            rowClass = 'window-row';
-                            icon = '😴 💤 ☕';
-                            label = ev.name;
-                        } else if (ev.type === 'reminder') {
-                            rowClass = 'reminder-row';
-                            icon = '⏰ 👕👟';
-                            label = ev.name;
-                        } else if (ev.type === 'meeting') {
-                            rowClass = 'meeting-row';
-                            icon = '👥 📋 🗣️';
-                            label = ev.name;
-                        }
-
-                        html += `<div class="event-row ${rowClass} ${pastClass} ${currentClass}" data-class="${ev.class}" data-start="${ev.start}" data-end="${ev.end}">`;
-                        html += `<div class="event-main">`;
-                        html += `<span class="event-time">${ev.start}–${ev.end}</span>`;
-                        html += `<span class="event-name"><span class="${ev.type === 'canteen' ? 'canteen-icon' : (ev.type === 'window' ? 'window-icon' : (ev.type === 'reminder' ? 'reminder-icon' : (ev.type === 'meeting' ? 'meeting-icon' : 'break-icon')))}">${icon}</span> ${label} <span class="${ev.type === 'canteen' ? 'canteen-icon' : (ev.type === 'window' ? 'window-icon' : (ev.type === 'reminder' ? 'reminder-icon' : (ev.type === 'meeting' ? 'meeting-icon' : 'break-icon')))}">${icon}</span></span>`;
-                        html += `</div>`;
-
-                        if (isCurrent) {
-                            const startSec = timeToSeconds(ev.start);
-                            const endSec = timeToSeconds(ev.end);
-                            const total = endSec - startSec;
-                            const elapsed = currentSeconds - startSec;
-                            const percent = Math.min(100, (elapsed / total) * 100);
-                            const remaining = endSec - currentSeconds;
-                            html += `<div class="event-progress" style="display:flex;">`;
-                            html += `<div class="progress-bar-container"><div class="progress-bar-fill" style="width:${percent}%;"></div></div>`;
-                            html += `<span class="time-remaining-small">До конца: ${formatTimeRemaining(remaining)}</span>`;
-                            html += `</div>`;
-                        } else {
-                            html += `<div class="event-progress"></div>`;
-                        }
-                        html += `</div>`;
-                    }
-
-                    prevShift = shift;
+            const days = [0, 1, 2, 3, 4];
+            days.forEach(day => {
+                const container = document.getElementById(`lessons-${day}`);
+                container.innerHTML = '';
+                const dayLessons = scheduleData.filter(l => l.day === day && l.class === currentFilter);
+                
+                dayLessons.forEach(lesson => {
+                    const row = document.createElement('div');
+                    row.className = 'event-row';
+                    if (lesson.green) row.classList.add('green-lesson');
+                    if (lesson.orange) row.classList.add('orange-lesson');
+                    
+                    row.innerHTML = `
+                        <div class="event-main">
+                            <div class="event-time">${lesson.start}-${lesson.end}</div>
+                            <div class="event-name">
+                                <span class="subject-name">${lesson.name}</span>
+                            </div>
+                        </div>
+                    `;
+                    container.appendChild(row);
                 });
-
-                lessonsDiv.innerHTML = html;
-
-                const countSpan = document.getElementById(`count-${['monday','tuesday','wednesday','thursday','friday'][day]}`);
-                if (countSpan) countSpan.textContent = `${lessonCount} уроков`;
-            }
-
-            applyFilter();
-            updateMessagePanel();
-            updateCounters();
-        }
-
-        // ==================== СЧЁТЧИК БАЛЛОВ ====================
-        let score4z = parseInt(localStorage.getItem('score4z') || '0');
-        let score2v = parseInt(localStorage.getItem('score2v') || '0');
-
-        function updateScoreDisplay() {
-            document.getElementById('score4zValue').textContent = score4z;
-            document.getElementById('score4zInput').value = score4z;
-            document.getElementById('score2vValue').textContent = score2v;
-            document.getElementById('score2vInput').value = score2v;
-            localStorage.setItem('score4z', score4z);
-            localStorage.setItem('score2v', score2v);
-        }
-
-        document.getElementById('score4zPlus').addEventListener('click', () => {
-            score4z++;
-            updateScoreDisplay();
-        });
-        document.getElementById('score4zMinus').addEventListener('click', () => {
-            if (score4z > 0) score4z--;
-            updateScoreDisplay();
-        });
-        document.getElementById('score4zReset').addEventListener('click', () => {
-            score4z = 0;
-            updateScoreDisplay();
-        });
-        document.getElementById('score4zInput').addEventListener('change', (e) => {
-            let val = parseInt(e.target.value);
-            if (isNaN(val) || val < 0) val = 0;
-            score4z = val;
-            updateScoreDisplay();
-        });
-
-        document.getElementById('score2vPlus').addEventListener('click', () => {
-            score2v++;
-            updateScoreDisplay();
-        });
-        document.getElementById('score2vMinus').addEventListener('click', () => {
-            if (score2v > 0) score2v--;
-            updateScoreDisplay();
-        });
-        document.getElementById('score2vReset').addEventListener('click', () => {
-            score2v = 0;
-            updateScoreDisplay();
-        });
-        document.getElementById('score2vInput').addEventListener('change', (e) => {
-            let val = parseInt(e.target.value);
-            if (isNaN(val) || val < 0) val = 0;
-            score2v = val;
-            updateScoreDisplay();
-        });
-
-        updateScoreDisplay();
-
-        // ==================== УПРАВЛЕНИЕ РЕЖИМАМИ ====================
-        let currentFilter = 'both'; // по умолчанию показываем оба класса
-
-        function applyFilter() {
-            const allRows = document.querySelectorAll('.event-row');
-            allRows.forEach(row => {
-                if (currentFilter === 'both') {
-                    row.style.display = 'flex';
-                } else {
-                    const rowClass = row.dataset.class;
-                    row.style.display = rowClass === currentFilter ? 'flex' : 'none';
-                }
+                
+                document.getElementById(`count-${['monday','tuesday','wednesday','thursday','friday'][day]}`).innerText = dayLessons.length;
             });
-
-            // Показываем/скрываем счётчики
-            const score4zDiv = document.getElementById('score4z');
-            const score2vDiv = document.getElementById('score2v');
-            if (currentFilter === 'both') {
-                score4zDiv.classList.remove('visible');
-                score2vDiv.classList.remove('visible');
-            } else if (currentFilter === '4z') {
-                score4zDiv.classList.add('visible');
-                score2vDiv.classList.remove('visible');
-            } else if (currentFilter === '2v') {
-                score4zDiv.classList.remove('visible');
-                score2vDiv.classList.add('visible');
-            }
-        }
-
-        function updateMessagePanel() {
-            const panel = document.getElementById('messagePanel');
-            const messageText = document.getElementById('messageText');
-            const now = new Date();
-            const day = now.getDay();
-            if (day === 0 || day === 6) {
-                messageText.textContent = 'Уроков сегодня нет 🎉';
-                panel.style.display = 'block';
-                return;
-            }
-            const currentDay = day - 1;
-            const events = buildAllEventsForDay(currentDay);
-            const lessonEnds = events
-                .filter(ev => ev.type === 'lesson')
-                .map(ev => timeToSeconds(ev.data.end));
-            if (lessonEnds.length === 0) {
-                panel.style.display = 'none';
-                return;
-            }
-            const lastEnd = Math.max(...lessonEnds);
-            const currentSeconds = now.getHours() * 3600 + now.getMinutes() * 60 + now.getSeconds();
-            if (currentSeconds >= lastEnd) {
-                messageText.textContent = 'Все уроки закончились! 🎉';
-                panel.style.display = 'block';
-            } else {
-                panel.style.display = 'none';
-            }
-        }
-
-        function showMain() {
-            document.getElementById('mainSchedule').style.display = 'block';
-            document.getElementById('countersPanel').style.display = 'block';
-            document.getElementById('printButtons').style.display = 'flex';
-            document.getElementById('bellMode').classList.remove('visible');
-        }
-
-        function showBellMode() {
-            document.getElementById('mainSchedule').style.display = 'none';
-            document.getElementById('countersPanel').style.display = 'none';
-            document.getElementById('printButtons').style.display = 'none';
-            document.getElementById('bellMode').classList.add('visible');
-            renderBellMode();
         }
 
         const btn4z = document.getElementById('btn-4z');
         const btn2v = document.getElementById('btn-2v');
-        const bellButton = document.getElementById('bellButton');
-        const backButton = document.getElementById('backToSchedule');
-
-        function setActive(activeBtn) {
-            [btn4z, btn2v].forEach(btn => btn.classList.remove('active'));
-            activeBtn.classList.add('active');
-        }
 
         btn4z.addEventListener('click', () => {
-            showMain();
-            setActive(btn4z);
             currentFilter = '4z';
-            applyFilter();
+            btn4z.classList.add('active');
+            btn2v.classList.remove('active');
+            renderSchedule();
         });
 
         btn2v.addEventListener('click', () => {
-            showMain();
-            setActive(btn2v);
             currentFilter = '2v';
-            applyFilter();
-        });
-
-        bellButton.addEventListener('click', () => {
-            showBellMode();
-        });
-
-        backButton.addEventListener('click', () => {
-            showMain();
-        });
-
-        document.getElementById('print4z').addEventListener('click', () => generateDoc('4z'));
-        document.getElementById('print2v').addEventListener('click', () => generateDoc('2v'));
-
-        showMain();
-        renderSchedule();
-        setInterval(() => {
+            btn2v.classList.add('active');
+            btn4z.classList.remove('active');
             renderSchedule();
-            if (document.getElementById('bellMode').classList.contains('visible')) {
-                renderBellMode();
-            }
-        }, 1000);
+        });
+
+        // Инициализация
+        btn4z.classList.add('active');
+        renderSchedule();
+
+        // Скрыть лишние элементы для простоты
+        document.getElementById('bellButton').addEventListener('click', () => {
+            document.getElementById('mainSchedule').style.display = 'none';
+            document.getElementById('bellMode').classList.add('visible');
+        });
+
+        document.getElementById('backToSchedule').addEventListener('click', () => {
+            document.getElementById('mainSchedule').style.display = 'block';
+            document.getElementById('bellMode').classList.remove('visible');
+        });
+
     </script>
 </body>
 </html>
