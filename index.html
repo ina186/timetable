@@ -128,13 +128,11 @@
             width: 100%;
         }
 
-        /* Ключевое изменение: колонки занимают ровно столько места, сколько нужно,
-           и переносятся на новую строку, если не помещаются все вместе */
+        /* Автоматическая подстройка колонок: минимум 200px */
         .days-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(min-content, max-content));
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
             gap: 1.5rem;
-            justify-content: start; /* чтобы лишнее пространство не распределялось */
         }
 
         .day-card {
@@ -201,7 +199,7 @@
             display: flex;
             align-items: flex-start;
             gap: 1rem;
-            flex-wrap: nowrap; /* запрещаем перенос внутри строки (время + название) */
+            flex-wrap: wrap; /* при необходимости время и название могут быть в столбик */
         }
 
         .event-time {
@@ -235,7 +233,7 @@
             align-items: center;
             gap: 0.5rem;
             line-height: 1.4;
-            flex-wrap: nowrap; /* бейдж и название всегда в одну строку */
+            flex-wrap: wrap; /* бейдж и название могут переноситься */
         }
 
         .class-badge {
@@ -262,9 +260,9 @@
 
         .subject-name {
             flex: 1 1 auto;
-            white-space: nowrap;   /* главное: запрет переноса названия */
-            word-break: keep-all;
-            overflow-wrap: normal;
+            white-space: normal;      /* разрешаем перенос, но без разрыва слов */
+            word-break: normal;       /* не разрывать слова */
+            overflow-wrap: normal;    /* не разрывать длинные слова (они и не длинные) */
             min-width: 0;
         }
 
@@ -1042,7 +1040,6 @@
     </div>
 
     <script>
-        // (весь JavaScript остаётся без изменений)
         // ==================== ДАННЫЕ РАСПИСАНИЯ ====================
         const scheduleData = [
             // 4З класс
