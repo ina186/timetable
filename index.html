@@ -23,7 +23,6 @@
             color: #0b1e33;
         }
 
-        /* Верхние кнопки: две кнопки рядом */
         .controls-row {
             width: 100%;
             max-width: 600px;
@@ -129,10 +128,13 @@
             width: 100%;
         }
 
+        /* Ключевое изменение: колонки занимают ровно столько места, сколько нужно,
+           и переносятся на новую строку, если не помещаются все вместе */
         .days-grid {
             display: grid;
-            grid-template-columns: repeat(5, 1fr);
+            grid-template-columns: repeat(auto-fit, minmax(min-content, max-content));
             gap: 1.5rem;
+            justify-content: start; /* чтобы лишнее пространство не распределялось */
         }
 
         .day-card {
@@ -199,6 +201,7 @@
             display: flex;
             align-items: flex-start;
             gap: 1rem;
+            flex-wrap: nowrap; /* запрещаем перенос внутри строки (время + название) */
         }
 
         .event-time {
@@ -232,7 +235,7 @@
             align-items: center;
             gap: 0.5rem;
             line-height: 1.4;
-            flex-wrap: wrap; /* ИСПРАВЛЕНО: теперь текст переносится при нехватке места */
+            flex-wrap: nowrap; /* бейдж и название всегда в одну строку */
         }
 
         .class-badge {
@@ -259,8 +262,9 @@
 
         .subject-name {
             flex: 1 1 auto;
-            white-space: normal;
-            word-break: break-word;
+            white-space: nowrap;   /* главное: запрет переноса названия */
+            word-break: keep-all;
+            overflow-wrap: normal;
             min-width: 0;
         }
 
@@ -454,7 +458,6 @@
         .day-card:nth-child(4) .day-title { border-bottom-color: #ef4444; }
         .day-card:nth-child(5) .day-title { border-bottom-color: #8b5cf6; }
 
-        /* Стили для счётчиков каникул */
         .counters-panel {
             margin-top: 3rem;
             border-radius: 28px;
@@ -655,7 +658,6 @@
             background: linear-gradient(90deg, #fbbf24, #f97316, #f59e0b);
         }
 
-        /* Кнопки скачивания */
         .print-buttons {
             display: flex;
             gap: 1rem;
@@ -719,7 +721,6 @@
             margin-bottom: 1rem;
         }
 
-        /* Режим расписания звонков */
         .bell-mode {
             display: none;
             width: 100%;
@@ -840,7 +841,6 @@
             top: -0.7rem;
         }
 
-        /* Счётчик баллов для классов (кавайный) */
         .score-counter {
             margin: 2rem auto 0;
             max-width: 400px;
@@ -932,18 +932,6 @@
                 grid-template-columns: 1fr;
             }
         }
-
-        @media (max-width: 480px) {
-            .days-grid {
-                grid-template-columns: 1fr;
-            }
-            .bell-days-grid {
-                grid-template-columns: 1fr;
-            }
-            body {
-                padding: 1rem;
-            }
-        }
     </style>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -1020,7 +1008,6 @@
         <button class="print-btn tertiary" id="print2v">Скачать расписание 2В</button>
     </div>
 
-    <!-- Счётчик баллов для 4З и 2В (кавайный) -->
     <div id="score4z" class="score-counter">
         <div class="score-header"><span>🐻</span> 4"З" класс <span>🌟</span></div>
         <div class="score-value" id="score4zValue">0</div>
@@ -1055,6 +1042,7 @@
     </div>
 
     <script>
+        // (весь JavaScript остаётся без изменений)
         // ==================== ДАННЫЕ РАСПИСАНИЯ ====================
         const scheduleData = [
             // 4З класс
@@ -1337,7 +1325,7 @@
             let title = '';
             if (classFilter === '4z') title = 'Расписание 4З класса';
             else if (classFilter === '2v') title = 'Расписание 2В класса';
-            else return; // для 'both' больше не используем
+            else return;
 
             const firstShiftLessons = [[], [], [], [], []];
             const secondShiftLessons = [[], [], [], [], []];
@@ -1744,7 +1732,7 @@
         updateScoreDisplay();
 
         // ==================== УПРАВЛЕНИЕ РЕЖИМАМИ ====================
-        let currentFilter = 'both'; // по умолчанию показываем оба класса
+        let currentFilter = 'both';
 
         function applyFilter() {
             const allRows = document.querySelectorAll('.event-row');
@@ -1757,7 +1745,6 @@
                 }
             });
 
-            // Показываем/скрываем счётчики
             const score4zDiv = document.getElementById('score4z');
             const score2vDiv = document.getElementById('score2v');
             if (currentFilter === 'both') {
