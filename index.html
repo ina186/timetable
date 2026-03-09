@@ -3,180 +3,1862 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.5, user-scalable=yes">
-    <title>Расписание 4З и 2В · Исправлено</title>
+    <title>Расписание 4З и 2В · финальная версия</title>
     <style>
-        /* Я ПЕРЕНЕС СЮДА ВЕСЬ ВАШ ОРИГИНАЛЬНЫЙ СТИЛЬ */
-        * { margin: 0; padding: 0; box-sizing: border-box; }
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
 
         body {
             background: #f1f5f9;
-            font-family: 'Inter', sans-serif;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
             display: flex;
             flex-direction: column;
             align-items: center;
+            justify-content: flex-start;
+            min-height: 100vh;
             padding: 2rem 1.5rem;
+            color: #0b1e33;
         }
 
-        .controls-row { width: 100%; max-width: 600px; margin-bottom: 2rem; }
-        .top-row { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+        /* Верхние кнопки: две кнопки рядом */
+        .controls-row {
+            width: 100%;
+            max-width: 600px;
+            margin-bottom: 2rem;
+        }
+
+        .top-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+        }
 
         .btn {
-            background: white; border: 1px solid #cbd5e1; padding: 0.8rem 1rem;
-            border-radius: 40px; font-weight: 500; cursor: pointer; text-align: center;
+            background: white;
+            border: 1px solid #cbd5e1;
+            padding: 0.8rem 1rem;
+            border-radius: 40px;
+            font-weight: 500;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.2s;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.03);
+            color: #1e3c72;
+            text-align: center;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            white-space: nowrap;
         }
-        .btn.active { background: #2563eb; color: white; }
 
-        /* --- ИСПРАВЛЕНИЕ ДЛЯ ПК ТУТ --- */
+        .btn.active {
+            background: #2563eb;
+            color: white;
+            border-color: #2563eb;
+            box-shadow: 0 8px 18px rgba(37,99,235,0.2);
+        }
+
+        .btn:hover {
+            background: #e2e8f0;
+        }
+
+        .btn.active:hover {
+            background: #1d4ed8;
+        }
+
+        .btn.bell {
+            background: #f59e0b;
+            color: white;
+            border-color: #f59e0b;
+            box-shadow: 0 8px 18px rgba(245,158,11,0.3);
+        }
+        .btn.bell:hover {
+            background: #d97706;
+        }
+
+        .btn.back {
+            background: #64748b;
+            color: white;
+            border-color: #64748b;
+        }
+
+        .message-panel {
+            background: linear-gradient(135deg, #a7f3d0, #6ee7b7);
+            border-radius: 60px;
+            padding: 1rem 2rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+            animation: bounce-message 2s infinite;
+            border: 2px solid #34d399;
+            width: fit-content;
+            max-width: 90%;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .message-content {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 1.5rem;
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: #065f46;
+        }
+
+        .message-icon {
+            font-size: 2rem;
+            animation: spin 3s infinite linear;
+        }
+
+        @keyframes bounce-message {
+            0%,100%{ transform: translateY(0); }
+            50%{ transform: translateY(-5px); }
+        }
+
+        @keyframes spin {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+
+        .schedule-container {
+            max-width: 1440px;
+            width: 100%;
+        }
+
         .days-grid {
             display: grid;
-            /* Вместо repeat(5, 1fr) теперь адаптивная сетка */
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); 
+            grid-template-columns: repeat(5, 1fr);
             gap: 1.5rem;
-            width: 100%;
-            max-width: 1440px;
         }
-        
-        .event-name {
+
+        .day-card {
+            background: #ffffff;
+            border-radius: 28px;
+            box-shadow: 0 20px 35px -10px rgba(0, 20, 40, 0.15), 0 1px 3px rgba(0,0,0,0.02);
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+            display: flex;
+            flex-direction: column;
+            overflow: visible;
+            border: 1px solid rgba(0,0,0,0.02);
+        }
+
+        .day-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 28px 40px -12px rgba(0, 40, 80, 0.2);
+        }
+
+        .day-title {
+            padding: 1.4rem 1.2rem 0.8rem 1.2rem;
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: #0b2b4a;
+            border-bottom: 3px solid #e2e8f0;
+            margin: 0 1rem 0.5rem 1rem;
+            letter-spacing: -0.01em;
             display: flex;
             align-items: center;
             gap: 0.5rem;
-            flex-wrap: wrap; /* Чтобы текст не вылезал */
+        }
+
+        .day-title span {
+            background: #e6f0ff;
+            color: #2563eb;
+            font-size: 0.9rem;
+            font-weight: 500;
+            padding: 0.2rem 0.9rem;
+            border-radius: 40px;
+            margin-left: auto;
+        }
+
+        .lessons {
+            padding: 0.8rem 1.2rem 2rem 1.2rem;
+            display: flex;
+            flex-direction: column;
+            gap: 0.9rem;
+        }
+
+        .event-row {
+            display: flex;
+            flex-direction: column;
+            border-bottom: 1px solid #edf2f7;
+            padding-bottom: 0.7rem;
+            border-radius: 12px;
+            transition: background 0.1s, opacity 0.2s, box-shadow 0.2s, border 0.2s;
+        }
+
+        .event-row:last-child {
+            border-bottom: none;
+            padding-bottom: 0;
+        }
+
+        .event-main {
+            display: flex;
+            align-items: flex-start;
+            gap: 1rem;
+        }
+
+        .event-time {
+            background: #f1f9ff;
+            color: #0369a1;
+            font-weight: 500;
+            font-size: 0.85rem;
+            padding: 0.3rem 0.8rem;
+            border-radius: 40px;
+            white-space: nowrap;
+            border: 1px solid #b9d9f0;
+            min-width: 88px;
+            text-align: center;
+            letter-spacing: -0.01em;
+            margin-left: 0.5rem;
+            background-color: white;
+        }
+
+        .event-time::before {
+            content: "🕘";
+            margin-right: 4px;
+            font-size: 0.75rem;
+            opacity: 0.7;
+            display: inline-block;
+            transform: translateY(-1px);
+        }
+
+        .event-name {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            line-height: 1.4;
+            flex-wrap: wrap; /* ИСПРАВЛЕНО: теперь текст переносится при нехватке места */
+        }
+
+        .class-badge {
+            display: inline-block;
+            padding: 0.2rem 0.8rem;
+            border-radius: 30px;
+            font-size: 0.7rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.02em;
+            background: #e0e7ff;
+            color: #1e3c72;
+            border: 1px solid #a5b4fc;
+            width: 42px;
+            text-align: center;
+            flex-shrink: 0;
+        }
+
+        .class-badge.class-2v {
+            background: #dcfce7;
+            color: #166534;
+            border-color: #86efac;
         }
 
         .subject-name {
-            word-wrap: break-word;
-            overflow-wrap: break-word;
+            flex: 1 1 auto;
+            white-space: normal;
+            word-break: break-word;
+            min-width: 0;
+        }
+
+        .canteen-indicator {
+            font-size: 0.9rem;
+            opacity: 0.9;
+            display: inline-flex;
+            align-items: center;
+            gap: 2px;
+            filter: drop-shadow(0 1px 1px rgba(0,0,0,0.1));
+            transition: transform 0.2s;
+            color: #b91c1c;
+            width: 32px;
+            flex-shrink: 0;
+            justify-content: flex-start;
+        }
+        .canteen-indicator:hover {
+            transform: scale(1.2);
+            opacity: 1;
+        }
+
+        .event-row.green-lesson {
+            background-color: #d9f0d9;
+        }
+
+        .event-row.orange-lesson {
+            background-color: #ffecb3;
+        }
+
+        .event-row.past-lesson {
+            opacity: 0.45;
+            filter: grayscale(0.6);
+            transition: opacity 0.2s;
+        }
+
+        .event-row.current-lesson {
+            background: rgba(139, 92, 246, 0.15) !important;
+            border: 4px solid #8b5cf6 !important;
+            box-shadow: 0 0 30px #8b5cf6, inset 0 0 10px rgba(139, 92, 246, 0.3);
+            transform: scale(1.02);
+            z-index: 10;
+            font-weight: 600;
+            transition: all 0.2s;
+        }
+
+        .event-row.break-row {
+            background: #fff3cd;
+            border-left: 8px solid #fbbf24;
+            animation: pulse-break 2s infinite;
+            margin: 0.5rem 0;
+            border-radius: 16px;
+        }
+
+        .event-row.canteen-row {
+            background: #fee2e2;
+            border-left: 8px solid #ef4444;
+            animation: pulse-canteen 2s infinite;
+            margin: 0.5rem 0;
+            border-radius: 16px;
+        }
+
+        .event-row.window-row {
+            background: #e0f2fe;
+            border-left: 8px solid #38bdf8;
+            animation: pulse-window 2s infinite;
+            margin: 0.5rem 0;
+            border-radius: 16px;
+        }
+
+        .event-row.reminder-row {
+            background: #fef9c3;
+            border-left: 8px solid #eab308;
+            animation: pulse-reminder 2s infinite;
+            margin: 0.5rem 0;
+            border-radius: 16px;
+        }
+
+        .event-row.meeting-row {
+            background: #ddd6fe;
+            border-left: 8px solid #8b5cf6;
+            animation: pulse-meeting 2s infinite;
+            margin: 0.5rem 0;
+            border-radius: 16px;
+        }
+
+        @keyframes pulse-window {
+            0% { box-shadow: 0 0 0 0 rgba(56, 189, 248, 0.4); }
+            70% { box-shadow: 0 0 0 8px rgba(56, 189, 248, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(56, 189, 248, 0); }
+        }
+
+        @keyframes pulse-reminder {
+            0% { box-shadow: 0 0 0 0 rgba(234, 179, 8, 0.4); }
+            70% { box-shadow: 0 0 0 8px rgba(234, 179, 8, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(234, 179, 8, 0); }
+        }
+
+        @keyframes pulse-meeting {
+            0% { box-shadow: 0 0 0 0 rgba(139, 92, 246, 0.4); }
+            70% { box-shadow: 0 0 0 8px rgba(139, 92, 246, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(139, 92, 246, 0); }
+        }
+
+        .break-icon, .canteen-icon, .window-icon, .reminder-icon, .meeting-icon {
+            font-size: 1.2rem;
+            animation: bounce 1s infinite;
+            display: inline-block;
+        }
+
+        .canteen-icon {
+            animation: bounce 1s infinite;
+        }
+
+        @keyframes bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-3px); }
+        }
+
+        .event-progress {
+            margin-top: 0.5rem;
+            margin-left: calc(88px + 1.5rem);
+            display: none;
+            flex-direction: column;
+            gap: 0.2rem;
+        }
+
+        .progress-bar-container {
+            background: #edf2f7;
+            height: 8px;
+            border-radius: 20px;
+            overflow: hidden;
+            width: 100%;
+        }
+
+        .progress-bar-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #2563eb, #3b82f6);
+            width: 0%;
+            transition: width 0.3s ease;
+        }
+
+        .break-row .progress-bar-fill {
+            background: linear-gradient(90deg, #f59e0b, #fbbf24);
+        }
+
+        .canteen-row .progress-bar-fill {
+            background: linear-gradient(90deg, #ef4444, #f87171);
+        }
+
+        .window-row .progress-bar-fill {
+            background: linear-gradient(90deg, #38bdf8, #7dd3fc);
+        }
+
+        .reminder-row .progress-bar-fill {
+            background: linear-gradient(90deg, #eab308, #fde047);
+        }
+
+        .meeting-row .progress-bar-fill {
+            background: linear-gradient(90deg, #8b5cf6, #c4b5fd);
+        }
+
+        .time-remaining-small {
+            font-size: 0.8rem;
+            color: #2563eb;
+            font-weight: 500;
+        }
+
+        .break-row .time-remaining-small {
+            color: #b45309;
+        }
+
+        .canteen-row .time-remaining-small {
+            color: #b91c1c;
+        }
+
+        .window-row .time-remaining-small {
+            color: #0369a1;
+        }
+
+        .reminder-row .time-remaining-small {
+            color: #854d0e;
+        }
+
+        .meeting-row .time-remaining-small {
+            color: #5b21b6;
+        }
+
+        .day-card:nth-child(1) .day-title { border-bottom-color: #3b82f6; }
+        .day-card:nth-child(2) .day-title { border-bottom-color: #10b981; }
+        .day-card:nth-child(3) .day-title { border-bottom-color: #f59e0b; }
+        .day-card:nth-child(4) .day-title { border-bottom-color: #ef4444; }
+        .day-card:nth-child(5) .day-title { border-bottom-color: #8b5cf6; }
+
+        /* Стили для счётчиков каникул */
+        .counters-panel {
+            margin-top: 3rem;
+            border-radius: 28px;
+            padding: 2rem;
+            box-shadow: 0 20px 35px -10px rgba(0, 0, 0, 0.2);
+            width: 100%;
+            max-width: 1440px;
+            transition: all 0.5s;
+        }
+
+        .counters-title {
+            font-size: 2.2rem;
+            font-weight: 700;
+            margin-bottom: 1.5rem;
+            border-left: 6px solid;
+            padding-left: 1rem;
+            text-shadow: 2px 2px 0 rgba(255,255,255,0.5);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .counters-title span {
+            font-size: 2.5rem;
+            animation: wave 2s infinite;
+        }
+
+        @keyframes wave {
+            0%,100%{ transform: rotate(0deg); }
+            25%{ transform: rotate(10deg); }
+            75%{ transform: rotate(-10deg); }
+        }
+
+        .counters-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+        }
+
+        .counter-card {
+            background: rgba(255, 255, 255, 0.7);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 1.5rem;
+            border: 2px solid;
+            transition: transform 0.2s;
+        }
+
+        .counter-card:hover {
+            transform: translateY(-5px) scale(1.02);
+        }
+
+        .counter-label {
+            font-size: 1.3rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .counter-value {
+            font-size: 3rem;
+            font-weight: 800;
+            margin-bottom: 1rem;
+            animation: pulseNumber 1s infinite;
+        }
+
+        @keyframes pulseNumber {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+
+        .counter-progress {
+            height: 16px;
+            border-radius: 20px;
+            overflow: hidden;
+            width: 100%;
+        }
+
+        .counter-progress-fill {
+            height: 100%;
+            width: 0%;
+            transition: width 0.3s ease;
+            border-radius: 20px;
+        }
+
+        .counter-note {
+            margin-top: 1rem;
+            font-size: 1rem;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .counter-note .emoji-big {
+            font-size: 1.5rem;
+            animation: spin-slow 5s infinite linear;
+        }
+
+        @keyframes spin-slow {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+
+        .autumn {
+            background: linear-gradient(135deg, #fef08a, #fdba74, #fb923c);
+            border: 2px solid #ea580c;
+            box-shadow: 0 20px 35px -10px #ea580c;
+        }
+        .autumn .counters-title {
+            color: #7a2e0e;
+            border-left-color: #c2410c;
+        }
+        .autumn .counter-card {
+            border-color: #f97316;
+        }
+        .autumn .counter-value {
+            color: #b45309;
+        }
+        .autumn .counter-progress {
+            background: #fed7aa;
+        }
+        .autumn .counter-progress-fill {
+            background: linear-gradient(90deg, #f97316, #f59e0b);
+        }
+
+        .winter {
+            background: linear-gradient(135deg, #bae6fd, #a5f3fc, #7dd3fc);
+            border: 2px solid #0284c7;
+            box-shadow: 0 20px 35px -10px #0284c7;
+        }
+        .winter .counters-title {
+            color: #075985;
+            border-left-color: #0369a1;
+        }
+        .winter .counter-card {
+            border-color: #38bdf8;
+        }
+        .winter .counter-value {
+            color: #0c4a6e;
+        }
+        .winter .counter-progress {
+            background: #b0e0ff;
+        }
+        .winter .counter-progress-fill {
+            background: linear-gradient(90deg, #0284c7, #38bdf8);
+        }
+
+        .spring {
+            background: linear-gradient(135deg, #fbc9d1, #fda4af, #fb7185);
+            border: 2px solid #f43f5e;
+            box-shadow: 0 20px 35px -10px #f43f5e;
+        }
+        .spring .counters-title {
+            color: #9d174d;
+            border-left-color: #db2777;
+        }
+        .spring .counter-card {
+            border-color: #f472b6;
+        }
+        .spring .counter-value {
+            color: #be185d;
+        }
+        .spring .counter-progress {
+            background: #fecdd3;
+        }
+        .spring .counter-progress-fill {
+            background: linear-gradient(90deg, #f43f5e, #fb7185);
+        }
+
+        .summer {
+            background: linear-gradient(135deg, #fef9c3, #fde68a, #fcd34d);
+            border: 2px solid #fbbf24;
+            box-shadow: 0 20px 35px -10px #fbbf24;
+            animation: summerGlow 3s infinite alternate;
+        }
+        @keyframes summerGlow {
+            from { box-shadow: 0 20px 35px -10px #fbbf24; }
+            to { box-shadow: 0 20px 45px -5px #f97316; }
+        }
+        .summer .counters-title {
+            color: #b45309;
+            border-left-color: #ea580c;
+        }
+        .summer .counter-card {
+            border-color: #f59e0b;
+        }
+        .summer .counter-value {
+            color: #ea580c;
+        }
+        .summer .counter-progress {
+            background: #fde68a;
+        }
+        .summer .counter-progress-fill {
+            background: linear-gradient(90deg, #fbbf24, #f97316, #f59e0b);
+        }
+
+        /* Кнопки скачивания */
+        .print-buttons {
+            display: flex;
+            gap: 1rem;
+            margin-top: 2rem;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .print-btn {
+            background: #2563eb;
+            color: white;
+            border: none;
+            padding: 1rem 2rem;
+            border-radius: 40px;
+            font-weight: 600;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.2s;
+            box-shadow: 0 8px 18px rgba(37,99,235,0.3);
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            line-height: 1.3;
+            text-align: center;
+            min-width: 200px;
+        }
+
+        .print-btn:hover {
+            background: #1d4ed8;
+            transform: translateY(-2px);
+        }
+
+        .print-btn.secondary {
+            background: #10b981;
+            box-shadow: 0 8px 18px rgba(16,185,129,0.3);
+        }
+        .print-btn.secondary:hover {
+            background: #059669;
+        }
+
+        .print-btn.tertiary {
+            background: #8b5cf6;
+            box-shadow: 0 8px 18px rgba(139,92,246,0.3);
+        }
+        .print-btn.tertiary:hover {
+            background: #7c3aed;
+        }
+
+        .print-btn.bell {
+            background: #f59e0b;
+            box-shadow: 0 8px 18px rgba(245,158,11,0.3);
+        }
+        .print-btn.bell:hover {
+            background: #d97706;
+        }
+
+        .bell-button-container {
+            display: flex;
+            justify-content: center;
+            margin-top: 2rem;
+            margin-bottom: 1rem;
+        }
+
+        /* Режим расписания звонков */
+        .bell-mode {
+            display: none;
+            width: 100%;
+            max-width: 1440px;
+            margin-top: 2rem;
+        }
+
+        .bell-mode.visible {
+            display: block;
+        }
+
+        .bell-mode h2 {
+            font-size: 2.2rem;
+            color: #0b2b4a;
+            margin-bottom: 1.5rem;
+            border-left: 6px solid #f59e0b;
+            padding-left: 1rem;
+            text-shadow: 1px 1px 0 #ffe0b0;
+        }
+
+        .bell-days-grid {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 1.5rem;
+        }
+
+        .bell-day-card {
+            background: linear-gradient(145deg, #ffffff, #f8fafc);
+            border-radius: 28px;
+            padding: 1.2rem;
+            box-shadow: 0 20px 30px -10px rgba(0,0,0,0.2);
+            border: 2px solid #f59e0b;
+            transition: transform 0.2s;
+        }
+
+        .bell-day-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .bell-day-title {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: #1e3c72;
+            text-align: center;
+            margin-bottom: 1rem;
+            border-bottom: 3px solid #f59e0b;
+            padding-bottom: 0.5rem;
+        }
+
+        .bell-event-item {
+            display: flex;
+            align-items: baseline;
+            gap: 0.5rem;
+            padding: 0.5rem 0;
+            border-bottom: 1px dashed #cbd5e1;
+            font-size: 0.95rem;
+        }
+        .bell-event-item:last-child {
+            border-bottom: none;
+        }
+        .bell-time {
+            font-weight: 600;
+            color: #2563eb;
+            min-width: 4.5rem;
+        }
+        .bell-type {
+            color: #1e293b;
             flex: 1;
         }
-        /* --- КОНЕЦ ИСПРАВЛЕНИЯ --- */
+        .bell-type i {
+            font-style: normal;
+            background: #f1f5f9;
+            padding: 0.2rem 0.5rem;
+            border-radius: 20px;
+            font-size: 0.8rem;
+        }
 
-        /* Далее идут все ваши стикеры, цвета и анимации из файла */
-        .day-card { background: white; border-radius: 28px; box-shadow: 0 10px 20px rgba(0,0,0,0.05); overflow: hidden; }
-        .day-title { padding: 1.5rem; font-size: 1.2rem; font-weight: 700; border-bottom: 2px solid #eee; }
-        .lessons { padding: 1rem; display: flex; flex-direction: column; gap: 10px; }
-        
-        .event-row { display: flex; flex-direction: column; padding: 10px; border-radius: 15px; background: #f8fafc; }
-        .event-main { display: flex; align-items: center; gap: 10px; }
-        .event-time { background: #e0f2fe; padding: 4px 10px; border-radius: 20px; font-size: 0.8rem; font-weight: 600; }
-        
-        .current-lesson { border: 3px solid #8b5cf6; background: #f5f3ff !important; transform: scale(1.02); }
-        .past-lesson { opacity: 0.5; filter: grayscale(1); }
-        
-        .progress-bar-container { background: #ddd; height: 6px; border-radius: 10px; margin-top: 5px; }
-        .progress-bar-fill { background: #8b5cf6; height: 100%; width: 0%; border-radius: 10px; }
+        .shift-divider {
+            margin: 0.5rem 0;
+            border-top: 2px dashed #f59e0b;
+            text-align: center;
+            font-size: 0.8rem;
+            color: #b45309;
+            letter-spacing: 1px;
+            position: relative;
+        }
+        .shift-divider::before {
+            content: "⏬ вторая смена ⏬";
+            background: #fef9c3;
+            padding: 0 0.5rem;
+            position: relative;
+            top: -0.7rem;
+            border-radius: 20px;
+            color: #b45309;
+            font-weight: 600;
+        }
 
-        /* Стили счётчиков */
-        .counters-panel { margin-top: 2rem; padding: 20px; border-radius: 20px; width: 100%; max-width: 1440px; }
-        .summer { background: #fef9c3; border: 2px solid #fde047; }
-        .counter-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px; }
-        
-        .bell-mode { display: none; width: 100%; max-width: 1200px; }
-        .bell-mode.visible { display: block; }
+        .no-lessons {
+            text-align: center;
+            padding: 1rem;
+            color: #64748b;
+            font-style: italic;
+        }
+
+        .shift-separator {
+            margin: 0.5rem 0 1rem 0;
+            border-top: 2px dashed #94a3b8;
+            text-align: center;
+            font-size: 0.8rem;
+            color: #64748b;
+            letter-spacing: 1px;
+        }
+        .shift-separator::before {
+            content: "⏬ вторая смена ⏬";
+            background: #f1f5f9;
+            padding: 0 0.5rem;
+            position: relative;
+            top: -0.7rem;
+        }
+
+        /* Счётчик баллов для классов (кавайный) */
+        .score-counter {
+            margin: 2rem auto 0;
+            max-width: 400px;
+            background: #fff9e6;
+            border-radius: 40px;
+            padding: 1.5rem 2rem;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+            border: 3px solid #fbbf24;
+            display: none;
+            text-align: center;
+            transition: transform 0.2s;
+        }
+        .score-counter.visible {
+            display: block;
+        }
+        .score-counter:hover {
+            transform: scale(1.02);
+        }
+        .score-header {
+            font-size: 1.8rem;
+            font-weight: 600;
+            color: #b45309;
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+        }
+        .score-header span {
+            font-size: 2rem;
+            animation: bounce 1s infinite;
+        }
+        .score-value {
+            font-size: 4rem;
+            font-weight: 800;
+            color: #2563eb;
+            margin: 0.5rem 0;
+            text-shadow: 2px 2px 0 #fde68a;
+        }
+        .score-controls {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            align-items: center;
+            flex-wrap: wrap;
+            margin-top: 1rem;
+        }
+        .score-btn {
+            background: #f59e0b;
+            border: none;
+            color: white;
+            font-size: 2rem;
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            cursor: pointer;
+            box-shadow: 0 5px 0 #b45309;
+            transition: all 0.1s;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .score-btn:active {
+            transform: translateY(5px);
+            box-shadow: 0 0 0 #b45309;
+        }
+        .score-input {
+            width: 80px;
+            height: 60px;
+            text-align: center;
+            font-size: 1.8rem;
+            font-weight: 600;
+            border: 2px solid #f59e0b;
+            border-radius: 20px;
+            color: #2563eb;
+            background: white;
+        }
+        .score-reset {
+            background: #94a3b8;
+            font-size: 1.2rem;
+            padding: 0 1.5rem;
+            border-radius: 30px;
+            height: 50px;
+            box-shadow: 0 5px 0 #475569;
+        }
+
+        @media (max-width: 700px) {
+            .top-row {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .days-grid {
+                grid-template-columns: 1fr;
+            }
+            .bell-days-grid {
+                grid-template-columns: 1fr;
+            }
+            body {
+                padding: 1rem;
+            }
+        }
     </style>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,400;14..32,450;14..32,500;14..32,600&display=swap" rel="stylesheet">
 </head>
 <body>
-
-    <div class="controls-row">
+    <div class="controls-row" id="mainControls">
         <div class="top-row">
-            <button class="btn active" id="btn-4z">4"З" класс</button>
+            <button class="btn" id="btn-4z">4"З" класс</button>
             <button class="btn" id="btn-2v">2"В" класс</button>
+        </div>
+    </div>
+
+    <div class="message-panel" id="messagePanel" style="display: none;">
+        <div class="message-content">
+            <span class="message-icon">🎉</span>
+            <span class="message-text" id="messageText"></span>
+            <span class="message-icon">🎉</span>
         </div>
     </div>
 
     <div class="schedule-container" id="mainSchedule">
         <div class="days-grid" id="days-grid">
+            <div class="day-card" data-day="0">
+                <div class="day-title">Понедельник <span id="count-monday">0</span></div>
+                <div class="lessons" id="lessons-0"></div>
             </div>
+            <div class="day-card" data-day="1">
+                <div class="day-title">Вторник <span id="count-tuesday">0</span></div>
+                <div class="lessons" id="lessons-1"></div>
+            </div>
+            <div class="day-card" data-day="2">
+                <div class="day-title">Среда <span id="count-wednesday">0</span></div>
+                <div class="lessons" id="lessons-2"></div>
+            </div>
+            <div class="day-card" data-day="3">
+                <div class="day-title">Четверг <span id="count-thursday">0</span></div>
+                <div class="lessons" id="lessons-3"></div>
+            </div>
+            <div class="day-card" data-day="4">
+                <div class="day-title">Пятница <span id="count-friday">0</span></div>
+                <div class="lessons" id="lessons-4"></div>
+            </div>
+        </div>
     </div>
 
     <div class="counters-panel summer" id="countersPanel">
-        <h3>До каникул осталось:</h3>
-        <div id="daysUntilHoliday">Загрузка...</div>
+        <div class="counters-title">
+            <span>🌞</span> До каникул осталось... <span>🍉</span>
+        </div>
+        <div class="counters-grid">
+            <div class="counter-card">
+                <div class="counter-label"><span>🏖️</span> Ближайшие каникулы</div>
+                <div class="counter-value" id="nextHolidayName">...</div>
+                <div class="counter-note" id="nextHolidayDates"></div>
+                <div class="counter-progress">
+                    <div class="counter-progress-fill" id="holidayProgress" style="width: 0%;"></div>
+                </div>
+                <div class="counter-note" id="daysUntilHoliday"><span class="emoji-big">⏳</span></div>
+            </div>
+            <div class="counter-card">
+                <div class="counter-label"><span>📆</span> Понедельников до конца года</div>
+                <div class="counter-value" id="mondaysLeft">...</div>
+                <div class="counter-progress">
+                    <div class="counter-progress-fill" id="yearProgress" style="width: 0%;"></div>
+                </div>
+                <div class="counter-note" id="yearDates"><span class="emoji-big">🗓️</span> с 1 сентября 2025 по 26 мая 2026</div>
+            </div>
+        </div>
     </div>
 
-    <div style="margin-top: 20px;">
-        <button class="btn" id="bellButton">🔔 Звонки</button>
+    <div class="print-buttons" id="printButtons">
+        <button class="print-btn secondary" id="print4z">Скачать расписание 4З</button>
+        <button class="print-btn tertiary" id="print2v">Скачать расписание 2В</button>
+    </div>
+
+    <!-- Счётчик баллов для 4З и 2В (кавайный) -->
+    <div id="score4z" class="score-counter">
+        <div class="score-header"><span>🐻</span> 4"З" класс <span>🌟</span></div>
+        <div class="score-value" id="score4zValue">0</div>
+        <div class="score-controls">
+            <button class="score-btn" id="score4zMinus">-</button>
+            <input type="number" id="score4zInput" class="score-input" value="0" min="0" step="1">
+            <button class="score-btn" id="score4zPlus">+</button>
+            <button class="score-btn score-reset" id="score4zReset">сброс</button>
+        </div>
+    </div>
+    <div id="score2v" class="score-counter">
+        <div class="score-header"><span>🐼</span> 2"В" класс <span>✨</span></div>
+        <div class="score-value" id="score2vValue">0</div>
+        <div class="score-controls">
+            <button class="score-btn" id="score2vMinus">-</button>
+            <input type="number" id="score2vInput" class="score-input" value="0" min="0" step="1">
+            <button class="score-btn" id="score2vPlus">+</button>
+            <button class="score-btn score-reset" id="score2vReset">сброс</button>
+        </div>
+    </div>
+
+    <div class="bell-button-container">
+        <button class="btn bell" id="bellButton">🔔 Расписание звонков</button>
     </div>
 
     <div class="bell-mode" id="bellMode">
-        <button class="btn" id="backToSchedule">Назад</button>
-        <div id="bellDaysGrid"></div>
+        <h2>🔔 Расписание звонков</h2>
+        <div class="bell-days-grid" id="bellDaysGrid"></div>
+        <div class="back-button">
+            <button class="btn back" id="backToSchedule">← Назад к расписанию</button>
+        </div>
     </div>
 
     <script>
-        // ВОЗВРАЩАЮ ВСЮ ВАШУ ЛОГИКУ
+        // ==================== ДАННЫЕ РАСПИСАНИЯ ====================
         const scheduleData = [
+            // 4З класс
             { class: '4z', day: 0, start: '08:00', end: '08:25', name: 'Разговоры о важном' },
             { class: '4z', day: 0, start: '08:30', end: '09:10', name: 'Русский язык' },
-            { class: '4z', day: 0, start: '09:15', end: '09:55', name: 'Английский язык' },
+            { class: '4z', day: 0, start: '09:15', end: '09:55', name: 'Английский язык', green: true },
             { class: '4z', day: 0, start: '10:15', end: '10:55', name: 'Математика' },
             { class: '4z', day: 0, start: '11:15', end: '11:55', name: 'Окружающий мир' },
+            { class: '4z', day: 0, start: '12:15', end: '12:55', name: 'Родной язык', orange: true },
+            { class: '4z', day: 1, start: '08:00', end: '08:40', name: 'Музыка', green: true },
+            { class: '4z', day: 1, start: '08:50', end: '09:30', name: 'Математика' },
+            { class: '4z', day: 1, start: '09:50', end: '10:30', name: 'Русский язык' },
+            { class: '4z', day: 1, start: '10:50', end: '11:30', name: 'Литературное чтение' },
+            { class: '4z', day: 1, start: '11:50', end: '12:30', name: 'Физическая культура', green: true },
+            { class: '4z', day: 2, start: '08:00', end: '08:40', name: 'Русский язык' },
+            { class: '4z', day: 2, start: '08:50', end: '09:30', name: 'Математика' },
+            { class: '4z', day: 2, start: '09:50', end: '10:30', name: 'Литературное чтение' },
+            { class: '4z', day: 2, start: '10:50', end: '11:30', name: 'Окружающий мир' },
+            { class: '4z', day: 3, start: '08:00', end: '08:40', name: 'Русский язык' },
+            { class: '4z', day: 3, start: '08:50', end: '09:30', name: 'Математика' },
+            { class: '4z', day: 3, start: '09:50', end: '10:30', name: 'Литературное чтение' },
+            { class: '4z', day: 3, start: '10:50', end: '11:30', name: 'Физ-ра/Бассейн', green: true },
+            { class: '4z', day: 3, start: '11:50', end: '12:30', name: 'Труд (технология)' },
+            { class: '4z', day: 4, start: '08:00', end: '08:40', name: 'Русский язык' },
+            { class: '4z', day: 4, start: '08:50', end: '09:30', name: 'Английский язык', green: true },
+            { class: '4z', day: 4, start: '09:50', end: '10:30', name: 'Лит. чтение на родном языке', orange: true },
+            { class: '4z', day: 4, start: '10:50', end: '11:30', name: 'Основы светской этики' },
+
+            // 2В класс
             { class: '2v', day: 0, start: '13:10', end: '13:50', name: 'Математика' },
-            { class: '2v', day: 0, start: '14:00', end: '14:40', name: 'Русский язык' }
-            // ... (все остальные предметы добавьте по аналогии или они подтянутся из вашего старого файла)
+            { class: '2v', day: 0, start: '14:00', end: '14:40', name: 'Английский язык', green: true },
+            { class: '2v', day: 0, start: '15:00', end: '15:40', name: 'Бассейн', green: true },
+            { class: '2v', day: 0, start: '16:00', end: '16:40', name: 'Русский язык' },
+            { class: '2v', day: 0, start: '16:50', end: '17:30', name: 'Изобразительное искусство' },
+            { class: '2v', day: 1, start: '12:45', end: '13:25', name: 'Родной язык', orange: true },
+            { class: '2v', day: 1, start: '13:45', end: '14:25', name: 'Математика' },
+            { class: '2v', day: 1, start: '14:45', end: '15:25', name: 'Русский язык' },
+            { class: '2v', day: 1, start: '15:45', end: '16:25', name: 'Литературное чтение' },
+            { class: '2v', day: 2, start: '12:45', end: '13:25', name: 'Лит. чтение на родном языке', orange: true },
+            { class: '2v', day: 2, start: '13:45', end: '14:25', name: 'Английский язык', green: true },
+            { class: '2v', day: 2, start: '14:45', end: '15:25', name: 'Математика' },
+            { class: '2v', day: 2, start: '15:45', end: '16:25', name: 'Русский язык' },
+            { class: '2v', day: 2, start: '16:35', end: '17:15', name: 'Литературное чтение' },
+            { class: '2v', day: 3, start: '12:45', end: '13:25', name: 'Музыка', green: true },
+            { class: '2v', day: 3, start: '13:45', end: '14:25', name: 'Физическая культура', green: true },
+            { class: '2v', day: 3, start: '14:45', end: '15:25', name: 'Русский язык' },
+            { class: '2v', day: 3, start: '15:45', end: '16:25', name: 'Окружающий мир' },
+            { class: '2v', day: 3, start: '16:35', end: '17:15', name: 'Труд (технология)' },
+            { class: '2v', day: 4, start: '14:25', end: '15:05', name: 'Математика' },
+            { class: '2v', day: 4, start: '15:20', end: '16:00', name: 'Русский язык' },
+            { class: '2v', day: 4, start: '16:15', end: '16:55', name: 'Окружающий мир' },
+            { class: '2v', day: 4, start: '17:10', end: '17:50', name: 'Литературное чтение' },
         ];
 
-        let currentFilter = '4z';
+        const holidays = [
+            { name: 'Осенние каникулы', start: '2025-10-27', end: '2025-11-06' },
+            { name: 'Зимние каникулы', start: '2025-12-31', end: '2026-01-11' },
+            { name: 'Весенние каникулы', start: '2026-03-28', end: '2026-04-05' }
+        ];
+        const schoolYearStart = '2025-09-01';
+        const schoolYearEnd = '2026-05-26';
+
+        function timeToSeconds(timeStr) {
+            const [h, m] = timeStr.split(':').map(Number);
+            return h * 3600 + m * 60;
+        }
+
+        function formatTimeRemaining(secondsTotal) {
+            if (secondsTotal < 0) secondsTotal = 0;
+            const mins = Math.floor(secondsTotal / 60);
+            const secs = Math.floor(secondsTotal % 60);
+            return `${mins} мин ${secs} сек`;
+        }
+
+        function shortenSubject(name) {
+            const map = {
+                'Разговоры о важном': 'Разг. о важн.',
+                'Русский язык': 'Рус. яз.',
+                'Английский язык': 'Англ. яз.',
+                'Математика': 'Матем.',
+                'Окружающий мир': 'Окр. мир',
+                'Родной язык': 'Родн. яз.',
+                'Литературное чтение': 'Лит. чт.',
+                'Физическая культура': 'Физ-ра',
+                'Физ-ра/Бассейн': 'Физ-ра/Бассейн',
+                'Музыка': 'Музыка',
+                'Труд (технология)': 'Труд',
+                'Изобразительное искусство': 'ИЗО',
+                'Бассейн': 'Бассейн',
+                'Лит. чтение на родном языке': 'Лит. чт. родн.',
+                'Основы светской этики': 'ОРКСЭ',
+                'Окно 😴💤☕': 'Окно',
+                'Пора идти на совещание! ☝️😲🕜': '❗ Совещание',
+                'Совещание': 'Совещание',
+                'Переодеваемся на физкультуру 👕👟⏰': 'Переодевание'
+            };
+            return map[name] || name;
+        }
+
+        function buildEventsForClass(className, day) {
+            const lessons = scheduleData.filter(lesson => lesson.class === className && lesson.day === day);
+            lessons.sort((a, b) => timeToSeconds(a.start) - timeToSeconds(b.start));
+            const events = [];
+            for (let i = 0; i < lessons.length; i++) {
+                let nextIsCanteen = false;
+                if (className === '4z' && i === 3) {
+                    nextIsCanteen = true;
+                }
+                if (className === '2v' && i === 1) {
+                    nextIsCanteen = true;
+                }
+                events.push({ type: 'lesson', class: className, data: lessons[i], nextIsCanteen });
+
+                if (i < lessons.length - 1) {
+                    const breakStart = lessons[i].end;
+                    const breakEnd = lessons[i + 1].start;
+                    const breakStartSec = timeToSeconds(breakStart);
+                    const breakEndSec = timeToSeconds(breakEnd);
+                    if (breakEndSec > breakStartSec) {
+                        let isCanteen = false;
+                        if (className === '4z' && i === 3) isCanteen = true;
+                        if (className === '2v' && i === 1) isCanteen = true;
+
+                        let isDressingReminder = false;
+                        if (className === '4z' && day === 3 && i === 2) {
+                            isDressingReminder = true;
+                        }
+                        if (className === '2v' && day === 3 && i === 0) {
+                            isDressingReminder = true;
+                        }
+
+                        if (isDressingReminder) {
+                            events.push({
+                                type: 'reminder',
+                                class: className,
+                                start: breakStart,
+                                end: breakEnd,
+                                name: 'Переодеваемся на физкультуру 👕👟⏰'
+                            });
+                        } else {
+                            events.push({
+                                type: isCanteen ? 'canteen' : 'break',
+                                class: className,
+                                start: breakStart,
+                                end: breakEnd,
+                                nextLesson: lessons[i + 1]
+                            });
+                        }
+                    }
+                }
+            }
+            return events;
+        }
+
+        function getTeacherEvents(day) {
+            if (day !== 4) return [];
+            return [
+                { type: 'window', class: 'teacher', start: '11:50', end: '12:30', name: 'Окно 😴💤☕' },
+                { type: 'break', class: 'teacher', start: '12:30', end: '12:50', name: 'Перемена' },
+                { type: 'window', class: 'teacher', start: '12:50', end: '13:25', name: 'Окно 😴💤☕' },
+                { type: 'reminder', class: 'teacher', start: '13:25', end: '13:45', name: 'Пора идти на совещание! ☝️😲🕜' },
+                { type: 'meeting', class: 'teacher', start: '13:45', end: '14:25', name: 'Совещание' }
+            ];
+        }
+
+        function buildAllEventsForDay(day) {
+            const events4z = buildEventsForClass('4z', day);
+            const events2v = buildEventsForClass('2v', day);
+            const teacherEvents = getTeacherEvents(day);
+            const allEvents = [...events4z, ...events2v, ...teacherEvents];
+            allEvents.sort((a, b) => {
+                const aStart = a.type === 'lesson' ? timeToSeconds(a.data.start) : timeToSeconds(a.start);
+                const bStart = b.type === 'lesson' ? timeToSeconds(b.data.start) : timeToSeconds(b.start);
+                return aStart - bStart;
+            });
+            return allEvents;
+        }
+
+        function parseDate(dateStr) {
+            const [y, m, d] = dateStr.split('-').map(Number);
+            return new Date(y, m-1, d);
+        }
+
+        function getNextHoliday(now) {
+            for (let h of holidays) {
+                const start = parseDate(h.start);
+                if (now < start) {
+                    return { ...h, startDate: start };
+                }
+            }
+            return null;
+        }
+
+        function updateCounters() {
+            const now = new Date();
+            now.setHours(0,0,0,0);
+            const nextHoliday = getNextHoliday(now);
+            const panel = document.getElementById('countersPanel');
+            panel.classList.remove('autumn', 'winter', 'spring', 'summer');
+            let seasonClass = 'summer';
+            if (nextHoliday) {
+                if (nextHoliday.name.includes('Осенние')) seasonClass = 'autumn';
+                else if (nextHoliday.name.includes('Зимние')) seasonClass = 'winter';
+                else if (nextHoliday.name.includes('Весенние')) seasonClass = 'spring';
+                else seasonClass = 'summer';
+            } else {
+                seasonClass = 'summer';
+            }
+            panel.classList.add(seasonClass);
+            const titleSpan = panel.querySelector('.counters-title span:first-child');
+            const titleSpan2 = panel.querySelector('.counters-title span:last-child');
+            if (seasonClass === 'spring') {
+                titleSpan.textContent = '🌸';
+                titleSpan2.textContent = '🌸';
+            } else if (seasonClass === 'summer') {
+                titleSpan.textContent = '🌞';
+                titleSpan2.textContent = '🍉';
+            } else if (seasonClass === 'autumn') {
+                titleSpan.textContent = '🍂';
+                titleSpan2.textContent = '🍁';
+            } else if (seasonClass === 'winter') {
+                titleSpan.textContent = '❄️';
+                titleSpan2.textContent = '⛄';
+            }
+
+            const holidayNameEl = document.getElementById('nextHolidayName');
+            const holidayDatesEl = document.getElementById('nextHolidayDates');
+            const daysUntilEl = document.getElementById('daysUntilHoliday');
+            const holidayProgress = document.getElementById('holidayProgress');
+
+            if (nextHoliday) {
+                const start = nextHoliday.startDate;
+                const end = parseDate(nextHoliday.end);
+                const daysUntil = Math.ceil((start - now) / (1000 * 60 * 60 * 24));
+                holidayNameEl.textContent = nextHoliday.name;
+                holidayDatesEl.textContent = `${nextHoliday.start} – ${nextHoliday.end}`;
+                daysUntilEl.innerHTML = `<span class="emoji-big">⏳</span> Осталось дней: ${daysUntil}`;
+                const yearStart = parseDate(schoolYearStart);
+                const totalDays = Math.ceil((start - yearStart) / (1000 * 60 * 60 * 24));
+                const passedDays = Math.ceil((now - yearStart) / (1000 * 60 * 60 * 24));
+                const percent = Math.min(100, Math.max(0, (passedDays / totalDays) * 100));
+                holidayProgress.style.width = percent + '%';
+            } else {
+                const end = parseDate(schoolYearEnd);
+                const daysUntil = Math.ceil((end - now) / (1000 * 60 * 60 * 24));
+                holidayNameEl.textContent = 'До окончания года';
+                holidayDatesEl.textContent = `26 мая 2026`;
+                daysUntilEl.innerHTML = `<span class="emoji-big">⏳</span> Осталось дней: ${daysUntil}`;
+                const yearStart = parseDate(schoolYearStart);
+                const totalDays = Math.ceil((end - yearStart) / (1000 * 60 * 60 * 24));
+                const passedDays = Math.ceil((now - yearStart) / (1000 * 60 * 60 * 24));
+                const percent = Math.min(100, Math.max(0, (passedDays / totalDays) * 100));
+                holidayProgress.style.width = percent + '%';
+            }
+
+            const endDate = parseDate(schoolYearEnd);
+            let mondays = 0;
+            let current = new Date(now);
+            while (current <= endDate) {
+                if (current.getDay() === 1) mondays++;
+                current.setDate(current.getDate() + 1);
+            }
+            document.getElementById('mondaysLeft').textContent = mondays;
+
+            const yearStart = parseDate(schoolYearStart);
+            const yearEnd = parseDate(schoolYearEnd);
+            const totalYearDays = Math.ceil((yearEnd - yearStart) / (1000 * 60 * 60 * 24));
+            const passedYearDays = Math.ceil((now - yearStart) / (1000 * 60 * 60 * 24));
+            const yearPercent = Math.min(100, Math.max(0, (passedYearDays / totalYearDays) * 100));
+            document.getElementById('yearProgress').style.width = yearPercent + '%';
+        }
+
+        function shortenSubjectForPrint(name) {
+            return shortenSubject(name);
+        }
+
+        function generateDoc(classFilter) {
+            const dayNames = ['Понедельник', 'Вторник', 'Среда', 'Четверг', 'Пятница'];
+            
+            let title = '';
+            if (classFilter === '4z') title = 'Расписание 4З класса';
+            else if (classFilter === '2v') title = 'Расписание 2В класса';
+            else return; // для 'both' больше не используем
+
+            const firstShiftLessons = [[], [], [], [], []];
+            const secondShiftLessons = [[], [], [], [], []];
+
+            for (let day = 0; day <= 4; day++) {
+                const events = buildAllEventsForDay(day);
+                events.forEach(ev => {
+                    if (ev.type === 'lesson') {
+                        const lessonClass = ev.data.class;
+                        if (lessonClass === classFilter) {
+                            const startMin = timeToSeconds(ev.data.start) / 60;
+                            if (startMin < 12*60+30) {
+                                firstShiftLessons[day].push({
+                                    start: ev.data.start,
+                                    end: ev.data.end,
+                                    name: ev.data.name,
+                                    class: lessonClass
+                                });
+                            } else {
+                                secondShiftLessons[day].push({
+                                    start: ev.data.start,
+                                    end: ev.data.end,
+                                    name: ev.data.name,
+                                    class: lessonClass
+                                });
+                            }
+                        }
+                    }
+                });
+                firstShiftLessons[day].sort((a, b) => timeToSeconds(a.start) - timeToSeconds(b.start));
+                secondShiftLessons[day].sort((a, b) => timeToSeconds(a.start) - timeToSeconds(b.start));
+            }
+
+            const maxFirst = Math.max(...firstShiftLessons.map(arr => arr.length));
+            const maxSecond = Math.max(...secondShiftLessons.map(arr => arr.length));
+
+            let html = `
+                <html>
+                <head>
+                    <meta charset="UTF-8">
+                    <title>${title}</title>
+                    <style>
+                        @page { size: landscape; margin: 1cm; }
+                        body { font-family: 'Times New Roman', serif; margin: 0; padding: 0; }
+                        h1 { text-align: center; font-size: 16pt; margin: 0.5cm 0; }
+                        table { width: 100%; border-collapse: collapse; margin-bottom: 0.5cm; }
+                        th, td { border: 1px solid black; padding: 4px; text-align: left; vertical-align: top; }
+                        th { background-color: #f0f0f0; font-weight: bold; }
+                        .separator { border-top: 2px dashed #333; margin: 0.3cm 0; }
+                        .shift-title { font-weight: bold; margin: 10px 0 5px; }
+                    </style>
+                </head>
+                <body>
+                    <h1>${title}</h1>
+            `;
+
+            if (classFilter === '4z') {
+                if (maxFirst > 0) {
+                    html += '<table><thead><tr>' + dayNames.map(d => `<th>${d}</th>`).join('') + '</tr></thead><tbody>';
+                    for (let row = 0; row < maxFirst; row++) {
+                        html += '<tr>';
+                        for (let day = 0; day < 5; day++) {
+                            const lesson = firstShiftLessons[day][row];
+                            if (lesson) {
+                                const timeStr = `${lesson.start}-${lesson.end}`.replace('-', '–');
+                                html += `<td><strong>${timeStr}</strong><br>${shortenSubjectForPrint(lesson.name)}</td>`;
+                            } else {
+                                html += '<td></td>';
+                            }
+                        }
+                        html += '</tr>';
+                    }
+                    html += '</tbody></table>';
+                }
+            } else if (classFilter === '2v') {
+                if (maxSecond > 0) {
+                    html += '<table><thead><tr>' + dayNames.map(d => `<th>${d}</th>`).join('') + '</tr></thead><tbody>';
+                    for (let row = 0; row < maxSecond; row++) {
+                        html += '<tr>';
+                        for (let day = 0; day < 5; day++) {
+                            const lesson = secondShiftLessons[day][row];
+                            if (lesson) {
+                                const timeStr = `${lesson.start}-${lesson.end}`.replace('-', '–');
+                                html += `<td><strong>${timeStr}</strong><br>${shortenSubjectForPrint(lesson.name)}</td>`;
+                            } else {
+                                html += '<td></td>';
+                            }
+                        }
+                        html += '</tr>';
+                    }
+                    html += '</tbody></table>';
+                }
+            }
+
+            html += `</body></html>`;
+
+            const blob = new Blob([html], { type: 'application/msword' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `${title}.doc`;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+        }
+
+        function renderBellMode() {
+            const dayNames = ['Понедельник', 'Вторник', 'Среда', 'Четверг', 'Пятница'];
+            const grid = document.getElementById('bellDaysGrid');
+            let html = '';
+
+            for (let day = 0; day < 5; day++) {
+                const events = buildAllEventsForDay(day);
+                const filteredEvents = events.filter(ev => {
+                    if (ev.type === 'lesson') return true;
+                    if (ev.type === 'break') return true;
+                    if (ev.type === 'canteen') return true;
+                    return false;
+                });
+
+                if (filteredEvents.length === 0) {
+                    html += `<div class="bell-day-card"><div class="bell-day-title">${dayNames[day]}</div><div class="no-lessons">Нет уроков</div></div>`;
+                    continue;
+                }
+
+                let dayContent = '';
+                let prevShift = null;
+                filteredEvents.forEach(ev => {
+                    let start, end, typeName, shift;
+                    if (ev.type === 'lesson') {
+                        start = ev.data.start;
+                        end = ev.data.end;
+                        const lessonNumber = filteredEvents.filter(e => e.type === 'lesson').findIndex(e => e === ev) + 1;
+                        typeName = `${lessonNumber} урок`;
+                        shift = timeToSeconds(ev.data.start) / 60 < 12*60+30 ? 'first' : 'second';
+                    } else {
+                        start = ev.start;
+                        end = ev.end;
+                        if (ev.type === 'break') typeName = 'Перемена';
+                        else if (ev.type === 'canteen') typeName = 'Столовая';
+                        shift = timeToSeconds(ev.start) / 60 < 12*60+30 ? 'first' : 'second';
+                    }
+
+                    if (prevShift === 'first' && shift === 'second') {
+                        dayContent += `<div class="shift-divider"></div>`;
+                    }
+                    dayContent += `<div class="bell-event-item"><span class="bell-time">${start}–${end}</span><span class="bell-type">${typeName}</span></div>`;
+                    prevShift = shift;
+                });
+
+                html += `<div class="bell-day-card"><div class="bell-day-title">${dayNames[day]}</div>${dayContent}</div>`;
+            }
+
+            grid.innerHTML = html;
+        }
 
         function renderSchedule() {
-            const grid = document.getElementById('days-grid');
-            grid.innerHTML = '';
-            const dayNames = ['Понедельник', 'Вторник', 'Среда', 'Четверг', 'Пятница'];
+            const now = new Date();
+            const currentDayJs = now.getDay();
+            const currentDay = currentDayJs === 0 ? 6 : currentDayJs - 1;
+            const currentSeconds = now.getHours() * 3600 + now.getMinutes() * 60 + now.getSeconds();
+            const isSchoolWeek = currentDay >= 0 && currentDay <= 4;
 
-            for (let i = 0; i < 5; i++) {
-                const dayLessons = scheduleData.filter(l => l.day === i && l.class === currentFilter);
-                let lessonsHtml = dayLessons.map(l => `
-                    <div class="event-row">
-                        <div class="event-main">
-                            <span class="event-time">${l.start}</span>
-                            <span class="subject-name">${l.name}</span>
-                        </div>
-                    </div>
-                `).join('');
+            for (let day = 0; day <= 4; day++) {
+                const lessonsDiv = document.getElementById(`lessons-${day}`);
+                if (!lessonsDiv) continue;
 
-                grid.innerHTML += `
-                    <div class="day-card">
-                        <div class="day-title">${dayNames[i]}</div>
-                        <div class="lessons">${lessonsHtml || 'Нет уроков'}</div>
-                    </div>
-                `;
+                const events = buildAllEventsForDay(day);
+
+                let dayFinished = false;
+                if (day === currentDay && isSchoolWeek) {
+                    const lessonEnds = events
+                        .filter(ev => ev.type === 'lesson')
+                        .map(ev => timeToSeconds(ev.data.end));
+                    if (lessonEnds.length > 0) {
+                        const lastEnd = Math.max(...lessonEnds);
+                        if (currentSeconds >= lastEnd) {
+                            dayFinished = true;
+                        }
+                    }
+                }
+
+                let activeEventIndex = -1;
+                if (day === currentDay && !dayFinished && isSchoolWeek) {
+                    for (let i = 0; i < events.length; i++) {
+                        const ev = events[i];
+                        if (ev.type === 'lesson') {
+                            const startSec = timeToSeconds(ev.data.start);
+                            const endSec = timeToSeconds(ev.data.end);
+                            if (currentSeconds >= startSec && currentSeconds < endSec) {
+                                activeEventIndex = i;
+                                break;
+                            }
+                        } else {
+                            const startSec = timeToSeconds(ev.start);
+                            const endSec = timeToSeconds(ev.end);
+                            if (currentSeconds >= startSec && currentSeconds < endSec) {
+                                activeEventIndex = i;
+                                break;
+                            }
+                        }
+                    }
+                }
+
+                let html = '';
+                let lessonCount = 0;
+                let prevShift = null;
+
+                events.forEach((ev, idx) => {
+                    let shift = null;
+                    if (ev.type === 'lesson') {
+                        shift = timeToSeconds(ev.data.start) / 60 < 12*60+30 ? 'first' : 'second';
+                    } else {
+                        shift = timeToSeconds(ev.start) / 60 < 12*60+30 ? 'first' : 'second';
+                    }
+
+                    if (prevShift === 'first' && shift === 'second') {
+                        html += `<div class="shift-separator"></div>`;
+                    }
+
+                    if (ev.type !== 'lesson') {
+                        if (idx !== activeEventIndex) {
+                            prevShift = shift;
+                            return;
+                        }
+                    }
+
+                    if (ev.type === 'lesson') lessonCount++;
+
+                    let isPast = false;
+                    if (isSchoolWeek) {
+                        if (day < currentDay) {
+                            isPast = true;
+                        } else if (day === currentDay) {
+                            if (!dayFinished) {
+                                if (ev.type === 'lesson') {
+                                    const endSec = timeToSeconds(ev.data.end);
+                                    if (currentSeconds > endSec) isPast = true;
+                                } else {
+                                    const endSec = timeToSeconds(ev.end);
+                                    if (currentSeconds > endSec) isPast = true;
+                                }
+                            } else {
+                                isPast = true;
+                            }
+                        } else {
+                            isPast = false;
+                        }
+                    } else {
+                        isPast = false;
+                    }
+
+                    const isCurrent = (idx === activeEventIndex);
+
+                    if (ev.type === 'lesson') {
+                        const lesson = ev.data;
+                        const greenClass = lesson.green ? 'green-lesson' : '';
+                        const orangeClass = lesson.orange ? 'orange-lesson' : '';
+                        const pastClass = isPast ? 'past-lesson' : '';
+                        const currentClass = isCurrent ? 'current-lesson' : '';
+                        html += `<div class="event-row ${greenClass} ${orangeClass} ${pastClass} ${currentClass}" data-class="${lesson.class}" data-start="${lesson.start}" data-end="${lesson.end}">`;
+                        html += `<div class="event-main">`;
+                        html += `<span class="event-time">${lesson.start}–${lesson.end}</span>`;
+                        html += `<span class="event-name">`;
+                        html += `<span class="class-badge ${lesson.class === '2v' ? 'class-2v' : ''}">${lesson.class === '4z' ? '4з' : '2в'}</span>`;
+                        html += `<span class="subject-name">${shortenSubject(lesson.name)}</span>`;
+                        if (ev.nextIsCanteen) {
+                            html += `<span class="canteen-indicator" title="После этого урока столовая"><span style="color: red;">❗</span> 🍽️</span>`;
+                        }
+                        html += `</span></div>`;
+
+                        if (isCurrent) {
+                            const startSec = timeToSeconds(lesson.start);
+                            const endSec = timeToSeconds(lesson.end);
+                            const total = endSec - startSec;
+                            const elapsed = currentSeconds - startSec;
+                            const percent = Math.min(100, (elapsed / total) * 100);
+                            const remaining = endSec - currentSeconds;
+                            html += `<div class="event-progress" style="display:flex;">`;
+                            html += `<div class="progress-bar-container"><div class="progress-bar-fill" style="width:${percent}%;"></div></div>`;
+                            html += `<span class="time-remaining-small">Осталось: ${formatTimeRemaining(remaining)}</span>`;
+                            html += `</div>`;
+                        } else {
+                            html += `<div class="event-progress"></div>`;
+                        }
+                        html += `</div>`;
+                    } else {
+                        const pastClass = isPast ? 'past-lesson' : '';
+                        const currentClass = isCurrent ? 'current-lesson' : '';
+                        let rowClass = '';
+                        let icon = '';
+                        let label = ev.name || (ev.type === 'break' ? 'ПЕРЕМЕНА' : '');
+                        if (ev.type === 'break') {
+                            rowClass = 'break-row';
+                            icon = '🏃‍♀️ 🏃‍♂️ 🥳 🎉 ✨';
+                            label = 'ПЕРЕМЕНА';
+                        } else if (ev.type === 'canteen') {
+                            rowClass = 'canteen-row';
+                            icon = '☕ 😋 🥗 🍽️ 👩‍🍳';
+                            label = 'СТОЛОВАЯ';
+                        } else if (ev.type === 'window') {
+                            rowClass = 'window-row';
+                            icon = '😴 💤 ☕';
+                            label = ev.name;
+                        } else if (ev.type === 'reminder') {
+                            rowClass = 'reminder-row';
+                            icon = '⏰ 👕👟';
+                            label = ev.name;
+                        } else if (ev.type === 'meeting') {
+                            rowClass = 'meeting-row';
+                            icon = '👥 📋 🗣️';
+                            label = ev.name;
+                        }
+
+                        html += `<div class="event-row ${rowClass} ${pastClass} ${currentClass}" data-class="${ev.class}" data-start="${ev.start}" data-end="${ev.end}">`;
+                        html += `<div class="event-main">`;
+                        html += `<span class="event-time">${ev.start}–${ev.end}</span>`;
+                        html += `<span class="event-name"><span class="${ev.type === 'canteen' ? 'canteen-icon' : (ev.type === 'window' ? 'window-icon' : (ev.type === 'reminder' ? 'reminder-icon' : (ev.type === 'meeting' ? 'meeting-icon' : 'break-icon')))}">${icon}</span> ${label} <span class="${ev.type === 'canteen' ? 'canteen-icon' : (ev.type === 'window' ? 'window-icon' : (ev.type === 'reminder' ? 'reminder-icon' : (ev.type === 'meeting' ? 'meeting-icon' : 'break-icon')))}">${icon}</span></span>`;
+                        html += `</div>`;
+
+                        if (isCurrent) {
+                            const startSec = timeToSeconds(ev.start);
+                            const endSec = timeToSeconds(ev.end);
+                            const total = endSec - startSec;
+                            const elapsed = currentSeconds - startSec;
+                            const percent = Math.min(100, (elapsed / total) * 100);
+                            const remaining = endSec - currentSeconds;
+                            html += `<div class="event-progress" style="display:flex;">`;
+                            html += `<div class="progress-bar-container"><div class="progress-bar-fill" style="width:${percent}%;"></div></div>`;
+                            html += `<span class="time-remaining-small">До конца: ${formatTimeRemaining(remaining)}</span>`;
+                            html += `</div>`;
+                        } else {
+                            html += `<div class="event-progress"></div>`;
+                        }
+                        html += `</div>`;
+                    }
+
+                    prevShift = shift;
+                });
+
+                lessonsDiv.innerHTML = html;
+
+                const countSpan = document.getElementById(`count-${['monday','tuesday','wednesday','thursday','friday'][day]}`);
+                if (countSpan) countSpan.textContent = `${lessonCount} уроков`;
+            }
+
+            applyFilter();
+            updateMessagePanel();
+            updateCounters();
+        }
+
+        // ==================== СЧЁТЧИК БАЛЛОВ ====================
+        let score4z = parseInt(localStorage.getItem('score4z') || '0');
+        let score2v = parseInt(localStorage.getItem('score2v') || '0');
+
+        function updateScoreDisplay() {
+            document.getElementById('score4zValue').textContent = score4z;
+            document.getElementById('score4zInput').value = score4z;
+            document.getElementById('score2vValue').textContent = score2v;
+            document.getElementById('score2vInput').value = score2v;
+            localStorage.setItem('score4z', score4z);
+            localStorage.setItem('score2v', score2v);
+        }
+
+        document.getElementById('score4zPlus').addEventListener('click', () => {
+            score4z++;
+            updateScoreDisplay();
+        });
+        document.getElementById('score4zMinus').addEventListener('click', () => {
+            if (score4z > 0) score4z--;
+            updateScoreDisplay();
+        });
+        document.getElementById('score4zReset').addEventListener('click', () => {
+            score4z = 0;
+            updateScoreDisplay();
+        });
+        document.getElementById('score4zInput').addEventListener('change', (e) => {
+            let val = parseInt(e.target.value);
+            if (isNaN(val) || val < 0) val = 0;
+            score4z = val;
+            updateScoreDisplay();
+        });
+
+        document.getElementById('score2vPlus').addEventListener('click', () => {
+            score2v++;
+            updateScoreDisplay();
+        });
+        document.getElementById('score2vMinus').addEventListener('click', () => {
+            if (score2v > 0) score2v--;
+            updateScoreDisplay();
+        });
+        document.getElementById('score2vReset').addEventListener('click', () => {
+            score2v = 0;
+            updateScoreDisplay();
+        });
+        document.getElementById('score2vInput').addEventListener('change', (e) => {
+            let val = parseInt(e.target.value);
+            if (isNaN(val) || val < 0) val = 0;
+            score2v = val;
+            updateScoreDisplay();
+        });
+
+        updateScoreDisplay();
+
+        // ==================== УПРАВЛЕНИЕ РЕЖИМАМИ ====================
+        let currentFilter = 'both'; // по умолчанию показываем оба класса
+
+        function applyFilter() {
+            const allRows = document.querySelectorAll('.event-row');
+            allRows.forEach(row => {
+                if (currentFilter === 'both') {
+                    row.style.display = 'flex';
+                } else {
+                    const rowClass = row.dataset.class;
+                    row.style.display = rowClass === currentFilter ? 'flex' : 'none';
+                }
+            });
+
+            // Показываем/скрываем счётчики
+            const score4zDiv = document.getElementById('score4z');
+            const score2vDiv = document.getElementById('score2v');
+            if (currentFilter === 'both') {
+                score4zDiv.classList.remove('visible');
+                score2vDiv.classList.remove('visible');
+            } else if (currentFilter === '4z') {
+                score4zDiv.classList.add('visible');
+                score2vDiv.classList.remove('visible');
+            } else if (currentFilter === '2v') {
+                score4zDiv.classList.remove('visible');
+                score2vDiv.classList.add('visible');
             }
         }
 
-        // Переключение классов
-        document.getElementById('btn-4z').onclick = function() {
-            currentFilter = '4z';
-            this.classList.add('active');
-            document.getElementById('btn-2v').classList.remove('active');
-            renderSchedule();
-        };
-
-        document.getElementById('btn-2v').onclick = function() {
-            currentFilter = '2v';
-            this.classList.add('active');
-            document.getElementById('btn-4z').classList.remove('active');
-            renderSchedule();
-        };
-
-        // Звонки
-        document.getElementById('bellButton').onclick = () => {
-            document.getElementById('mainSchedule').style.display = 'none';
-            document.getElementById('bellMode').classList.add('visible');
-        };
-        document.getElementById('backToSchedule').onclick = () => {
-            document.getElementById('mainSchedule').style.display = 'block';
-            document.getElementById('bellMode').classList.remove('visible');
-        };
-
-        renderSchedule();
-
-        // Счётчик каникул (пример упрощенный)
-        function updateHolidays() {
+        function updateMessagePanel() {
+            const panel = document.getElementById('messagePanel');
+            const messageText = document.getElementById('messageText');
             const now = new Date();
-            const holiday = new Date(2026, 4, 26); // Пример: 26 мая
-            const diff = Math.ceil((holiday - now) / (1000 * 60 * 60 * 24));
-            document.getElementById('daysUntilHoliday').innerText = `До летних каникул: ${diff} дней`;
+            const day = now.getDay();
+            if (day === 0 || day === 6) {
+                messageText.textContent = 'Уроков сегодня нет 🎉';
+                panel.style.display = 'block';
+                return;
+            }
+            const currentDay = day - 1;
+            const events = buildAllEventsForDay(currentDay);
+            const lessonEnds = events
+                .filter(ev => ev.type === 'lesson')
+                .map(ev => timeToSeconds(ev.data.end));
+            if (lessonEnds.length === 0) {
+                panel.style.display = 'none';
+                return;
+            }
+            const lastEnd = Math.max(...lessonEnds);
+            const currentSeconds = now.getHours() * 3600 + now.getMinutes() * 60 + now.getSeconds();
+            if (currentSeconds >= lastEnd) {
+                messageText.textContent = 'Все уроки закончились! 🎉';
+                panel.style.display = 'block';
+            } else {
+                panel.style.display = 'none';
+            }
         }
-        updateHolidays();
+
+        function showMain() {
+            document.getElementById('mainSchedule').style.display = 'block';
+            document.getElementById('countersPanel').style.display = 'block';
+            document.getElementById('printButtons').style.display = 'flex';
+            document.getElementById('bellMode').classList.remove('visible');
+        }
+
+        function showBellMode() {
+            document.getElementById('mainSchedule').style.display = 'none';
+            document.getElementById('countersPanel').style.display = 'none';
+            document.getElementById('printButtons').style.display = 'none';
+            document.getElementById('bellMode').classList.add('visible');
+            renderBellMode();
+        }
+
+        const btn4z = document.getElementById('btn-4z');
+        const btn2v = document.getElementById('btn-2v');
+        const bellButton = document.getElementById('bellButton');
+        const backButton = document.getElementById('backToSchedule');
+
+        function setActive(activeBtn) {
+            [btn4z, btn2v].forEach(btn => btn.classList.remove('active'));
+            activeBtn.classList.add('active');
+        }
+
+        btn4z.addEventListener('click', () => {
+            showMain();
+            setActive(btn4z);
+            currentFilter = '4z';
+            applyFilter();
+        });
+
+        btn2v.addEventListener('click', () => {
+            showMain();
+            setActive(btn2v);
+            currentFilter = '2v';
+            applyFilter();
+        });
+
+        bellButton.addEventListener('click', () => {
+            showBellMode();
+        });
+
+        backButton.addEventListener('click', () => {
+            showMain();
+        });
+
+        document.getElementById('print4z').addEventListener('click', () => generateDoc('4z'));
+        document.getElementById('print2v').addEventListener('click', () => generateDoc('2v'));
+
+        showMain();
+        renderSchedule();
+        setInterval(() => {
+            renderSchedule();
+            if (document.getElementById('bellMode').classList.contains('visible')) {
+                renderBellMode();
+            }
+        }, 1000);
     </script>
 </body>
 </html>
